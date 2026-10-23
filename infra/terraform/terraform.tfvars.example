@@ -1,0 +1,3 @@
+# Copy to terraform.tfvars for a later local plan only if overrides are needed.
+# No subscription IDs, access keys, credentials, or cloud resources are required.
+platform_name = "ingen-fleet-ops"

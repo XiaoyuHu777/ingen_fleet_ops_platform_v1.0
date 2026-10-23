@@ -1,0 +1,15 @@
+title = "InGen public-safe skeleton"
+
+[extend]
+useDefault = true
+
+# Generated environments/tools are not publication inputs. Do not exempt .env:
+# accidentally committed credentials must still be detected in history.
+[[allowlists]]
+description = "Local generated environments and downloaded tools"
+paths = [
+  '''(^|/)\.venv/''',
+  '''(^|/)\.tools/''',
+  '''(^|/)\.uv-cache/''',
+  '''(^|/)\.git/''',
+]

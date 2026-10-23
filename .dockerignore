@@ -1,0 +1,15 @@
+.git
+.env
+.env.*
+!.env.example
+.venv
+.tools
+.uv-cache
+__pycache__
+.pytest_cache
+.mypy_cache
+.ruff_cache
+htmlcov
+.coverage
+coverage.xml
+new_task_2026-10-26

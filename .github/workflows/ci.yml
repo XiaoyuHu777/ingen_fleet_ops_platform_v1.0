@@ -1,0 +1,51 @@
+name: Week 1 foundation checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.9.6"
+          python-version: "3.11.14"
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.11.3"
+          terraform_wrapper: false
+      - name: Install locked Python environment
+        run: make setup
+      - name: Ruff, Black, mypy, pytest and coverage
+        run: make check
+      - name: Install checksum-verified tflint and gitleaks
+        run: python scripts/install_tools.py
+      - name: Terraform format, validate and tflint
+        run: make terraform-check
+      - name: Scan working tree and committed history
+        run: |
+          make secret-scan
+          .tools/bin/gitleaks git . --config .gitleaks.toml --redact --no-banner
+      - name: Check the real local stack and dependency failure behavior
+        run: |
+          cp .env.example .env
+          make up
+          python scripts/smoke_stack.py
+      - name: Show stack logs and retain no data after this ephemeral CI run
+        if: always()
+        run: |
+          docker compose --env-file .env -f infra/local/compose.yaml logs --no-color
+          docker compose --env-file .env -f infra/local/compose.yaml down
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: python-coverage
+          path: coverage.xml
