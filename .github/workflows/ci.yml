@@ -33,7 +33,7 @@ jobs:
       - name: Scan working tree and committed history
         run: |
           make secret-scan
-          .tools/bin/gitleaks git . --config .gitleaks.toml --redact --no-banner
+          .tools/bin/gitleaks git . --log-opts="--full-history HEAD" --config .gitleaks.toml --redact --no-banner
       - name: Check the real local stack and dependency failure behavior
         run: |
           cp .env.example .env
@@ -42,8 +42,10 @@ jobs:
       - name: Show stack logs and retain no data after this ephemeral CI run
         if: always()
         run: |
-          docker compose --env-file .env -f infra/local/compose.yaml logs --no-color
-          docker compose --env-file .env -f infra/local/compose.yaml down
+          if [ -f .env ]; then
+            docker compose --env-file .env -f infra/local/compose.yaml logs --no-color
+            docker compose --env-file .env -f infra/local/compose.yaml down
+          fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:

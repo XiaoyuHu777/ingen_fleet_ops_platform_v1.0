@@ -20,7 +20,7 @@ secondary. Product SE plans and role-relevant handouts provide supporting eviden
 | Personal plan p. 6 | At least three passing tests and a coverage report | 18 tests passed, 89.61 percent branch-aware coverage | Verified locally; coverage.xml generated and ignored |
 | Personal plan p. 6 and mentor clarification | Green GitHub Actions with every named gate | .github/workflows/ci.yml includes Python, Terraform, tflint and gitleaks | Defined; real remote run pending |
 | Personal plan p. 7 | Deliberately broken branch fails format and secret gates | Isolated local rejection fixtures exited 3 and 1 | Local rejection verified; remote branch evidence pending |
-| Personal plan pp. 6 and 14 | 300–500-word architecture reflection | ../weekly/Wk-01-Log.md | 434 words including heading/date; personal review pending |
+| Personal plan pp. 6 and 14 | 300–500-word architecture reflection | ../weekly/Wk-01-Log.md | 418 body words; 431 including heading/date; reflects Xiaoyu's storage and signing concern |
 
 Local runtime evidence and its limits are in W01_Validation_Report.md. No remote
 CI badge or completed rollout benchmark is claimed.

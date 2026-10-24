@@ -2,48 +2,47 @@
 
 Prepared 23 October 2026 for the 26 October review.
 
-The hardest architecture decision in this proposal was how agents should receive
-deployment targets. I used my individual SDE plan as the primary reference and
-the product documents to identify operating constraints. The five-platform brief
-supports one shared platform, with Rover as the implementation target and Fari
-testing generality. Sentinel, Humanoid, and Senpai contribute requirements without
-adding three separate implementations.
+The hardest architecture decision for me was Artifact Storage and Signing. The
+security mechanisms are relatively unfamiliar to me, and the decision involves
+more than deciding where a model should be stored. It also requires considering
+how to prevent a model from being tampered with. This makes the trust boundary
+an important part of the proposed storage design.
 
-I compared jittered HTTPS polling with persistent WebSocket or MQTT connections.
-Persistent connections offer faster notification and can also be initiated
-outbound, so a school firewall does not automatically rule them out. However,
-they add session recovery and keepalive handling; MQTT also introduces a broker.
-After a disconnection, the agent still needs to reconcile the latest desired
-state. Deployment correctness therefore depends on durable state and recovery
-behaviour rather than on notification alone.
+ADR-0002 proposes content-addressed storage in MinIO locally and an Azure Blob
+adapter later. SHA-256 gives the manifest a stable identity and binds the payload
+hashes recorded inside it. Checking against a trusted digest detects changed
+bytes, but a hash alone does not establish an authorized publisher: an attacker
+could replace both a file and an untrusted hash. An Ed25519 signature over the
+manifest digest adds origin authentication when the robot already trusts the
+verification key. A valid signature still does not establish evaluation quality,
+operator approval, or safe physical behaviour.
 
-I chose outbound pull with a proposed five-second interval and independent
-twenty-percent jitter. Twenty agents would generate approximately four
-desired-state reads per second, plus four heartbeat requests per second. These
-are planning estimates, not measured capacity. The brief also exposes a more
-important constraint: a 256 MiB package takes about 17.9 minutes over an effective
-2 Mbit/s link before retries. Polling cannot solve that transfer budget. Resumable
-downloads, explicit pending state, caching where appropriate, and recorded test
-conditions are necessary. The programme's under-ten-minute rollout target stays
-unchanged; a weak-link failure must be reported as a gap.
+The proposed key boundary keeps the signing private key restricted to a registry
+signing component. Robots receive public verification keys, not the signing key.
+Rotation requires distributing an authenticated trust bundle, confirming receipt,
+changing the signer, and retiring the old key. Compromise requires revocation
+without normal overlap. Offline robots cannot receive revocation immediately;
+they must refresh trust before a new activation. These are design requirements
+for later implementation and drills, not security features already delivered.
 
-The failure policy helped settle the communication choice. Agents keep their
-last verified model during controller outages. A short activation lease prevents
-a stale target from authorizing new activation indefinitely. Local smoke-test
-rollback remains independent of controller availability. Fari adds another
-condition: completed delivery must wait for an interaction-safe activation window.
-These behaviours are specified now and implemented in their later assigned weeks.
+Cosign is a genuine alternative. It supports ordinary blobs, self-managed keys,
+identity-based signing, and offline verification bundles. The proposed Ed25519
+choice keeps the initial Python agent's verification contract small and explicit,
+while leaving key distribution and rotation as responsibilities this project must
+implement. Cosign's provenance capabilities remain a later option rather than
+being excluded on an incorrect always-online assumption.
 
-For the foundation, I selected Compose locally and Container Apps for a future
-Azure sandbox requiring explicit approval. The storage design specifies
-content-addressed artifacts and an Ed25519 verification contract. The repository
-contains the registry foundation, PostgreSQL, MinIO, locked Python dependencies,
-tests, and the CI workflow. Eighteen tests passed with 89.61 percent branch-aware
-coverage. Local quality checks and real dependency-outage exercises passed:
-readiness fails when either dependency stops and recovers when it returns.
+Rover adds the requirement to resume interrupted downloads while retaining the
+last healthy model. Completed bytes must be checked before activation. Sentinel
+adds the audit question of which authorized artifact ran on a unit during an
+incident. Together, these constraints connect immutable storage, signatures,
+release records, and reported version state. The personal plan remains primary:
+one shared platform uses Rover first and Fari to check generality.
 
-The remaining submission work is to review the assumptions and decisions,
-publish to the intended GitHub repository, and inspect actual Actions results,
-including deliberately broken remote checks. A workflow file and local passes do
-not establish green remote CI. No signing implementation, robot agent, simulated
-fleet rollout, or cloud deployment is claimed for Week 1.
+Week 1 implements the foundation only: the empty registry, PostgreSQL, MinIO,
+configuration, logging, tests, and CI definition. Recorded local results were
+18 passing tests and 89.61 percent branch-aware coverage. Dependency-stop and
+recovery exercises passed. Remote Actions and deliberately broken remote checks
+remain pending in this version of the log; their status must come from actual
+run evidence. Signing, evaluation, agents, fleet rollout, and cloud deployment
+remain assigned to later weeks.
