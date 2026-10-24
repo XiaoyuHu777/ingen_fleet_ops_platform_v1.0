@@ -6,7 +6,7 @@ terraform {
 # Azure resources are a later, separately approved and budgeted milestone.
 variable "platform_name" {
   description = "Non-secret project identifier reserved for future infrastructure."
-  type        = string
+  type=string
   default     = "ingen-fleet-ops"
 }
 
