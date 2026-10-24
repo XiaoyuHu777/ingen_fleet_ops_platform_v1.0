@@ -40,9 +40,10 @@ release records, and reported version state. The personal plan remains primary:
 one shared platform uses Rover first and Fari to check generality.
 
 Week 1 implements the foundation only: the empty registry, PostgreSQL, MinIO,
-configuration, logging, tests, and CI definition. Recorded local results were
-18 passing tests and 89.61 percent branch-aware coverage. Dependency-stop and
-recovery exercises passed. Remote Actions and deliberately broken remote checks
-remain pending in this version of the log; their status must come from actual
-run evidence. Signing, evaluation, agents, fleet rollout, and cloud deployment
-remain assigned to later weeks.
+configuration, logging, tests, and CI. Local and [remote checks](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/actions/runs/40047956211)
+passed: 18 tests with 89.61 percent branch-aware coverage. Separate real
+dependency-stop and recovery exercises also passed. Independent [format](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/actions/runs/40048051402)
+and [synthetic-secret](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/actions/runs/40048051816)
+branches failed only their intended gates. An initial uv cache-save failure was
+fixed without relaxing those gates. Signing, evaluation, agents, fleet rollout,
+and cloud deployment remain assigned to later weeks.

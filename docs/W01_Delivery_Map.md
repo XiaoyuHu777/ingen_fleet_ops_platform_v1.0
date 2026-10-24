@@ -12,20 +12,21 @@ secondary. Product SE plans and role-relevant handouts provide supporting eviden
 | Personal plan pp. 5–6 and mentor clarification | Five platforms with deployment, connectivity, update safety, telemetry/privacy, primary challenge and quantified assumptions | W01_Fleet_Ops_Brief.docx, five product sections, baseline and source register | Prepared for review |
 | Personal plan p. 6 | Three justified architecture decisions | adr/0001-runtime-target.md, 0002-artifact-storage-and-signing.md, 0003-agent-communication.md | Proposed choices recorded for review |
 | Personal plan p. 6 | Component diagram, six responsibilities, trust, five failure cases, initial endpoints and Section 1.4 targets | W01_Platform_Design_Doc.docx | Prepared for review; later behaviours are specifications |
-| Personal plan p. 6 | Repository foundation and one-command stack | Repository layout, Makefile, infra/local/compose.yaml | Verified locally |
+| Personal plan p. 6 | Repository foundation and one-command stack | Repository layout, Makefile, infra/local/compose.yaml | Verified locally and on a clean GitHub Ubuntu runner |
 | Personal plan p. 6 | Python pins, lockfile, environment-based configuration and no committed secrets | pyproject.toml, uv.lock, .python-version, registry/config.py, .env.example | Verified locally |
 | Personal plan pp. 4 and 6 | Terraform variable example and no unintended cloud spend | infra/terraform/terraform.tfvars.example; no-provider, no-resource scaffold | Verified locally; no Azure apply |
 | Personal plan p. 6 | JSON logs with request-id on every line | registry/logging.py, middleware and correlated request evidence | Verified locally |
 | Personal plan pp. 6–7 | Genuine readiness and non-200 when object storage is stopped | Authenticated probes, real dependency-stop smoke and slow-probe tests | Verified locally |
 | Personal plan p. 6 | At least three passing tests and a coverage report | 18 tests passed, 89.61 percent branch-aware coverage | Verified locally; coverage.xml generated and ignored |
-| Personal plan p. 6 and mentor clarification | Green GitHub Actions with every named gate | .github/workflows/ci.yml includes Python, Terraform, tflint and gitleaks | Defined; real remote run pending |
-| Personal plan p. 7 | Deliberately broken branch fails format and secret gates | Isolated local rejection fixtures exited 3 and 1 | Local rejection verified; remote branch evidence pending |
+| Personal plan p. 6 and mentor clarification | Green GitHub Actions with every named gate | [Green main run](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/actions/runs/40047956211), including the real stack smoke | Verified remotely; every gate passed |
+| Personal plan p. 7 | Deliberately broken branch fails format and secret gates | [Format rejection](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/actions/runs/40048051402), [fake-secret rejection](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/actions/runs/40048051816) | Verified remotely; each failed only its intended gate |
 | Personal plan pp. 6 and 14 | 300–500-word architecture reflection | ../weekly/Wk-01-Log.md | 418 body words; 431 including heading/date; reflects Xiaoyu's storage and signing concern |
 
-Local runtime evidence and its limits are in W01_Validation_Report.md. No remote
-CI badge or completed rollout benchmark is claimed.
+Local and remote evidence, commit SHAs and limits are in
+[W01_Validation_Report.md](W01_Validation_Report.md). The README badge follows main.
+Later fleet-rollout and cloud benchmarks have not been implemented or measured.
 
-## Decisions to review before submission
+## Review focus for 26 October
 
 1. Treat the fleet counts, packaged sizes, bandwidths and update schedules as
    planning assumptions; replace them if the supervisor supplies authoritative data.
@@ -33,8 +34,9 @@ CI badge or completed rollout benchmark is claimed.
    content-addressed storage and Ed25519; jittered agent-initiated HTTPS pull.
 3. Confirm the weekly reflection describes the reasoning Xiaoyu is prepared to
    explain. The communication protocol is a design decision, not a Week 1 feature.
-4. Publish the reviewed repository, inspect an actual green Actions run, and run
-   the required deliberately broken remote checks before declaring all gates met.
+4. Use the recorded Actions links to inspect the successful run and the two
+   intentional failures. Temporary verification branches are retained as evidence
+   and must not be merged into main.
 
 The original Dropbox documents and personal plan remain outside the repository.
 Week 2 robot APIs and subsequent model/agent/rollout features are not added to the

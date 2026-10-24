@@ -1,5 +1,7 @@
 # InGen Fleet Operations Platform — Week 1
 
+[![Week 1 foundation checks](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/actions/workflows/ci.yml?query=branch%3Amain)
+
 One shared control-plane foundation for robot model operations. Aido Rover is the
 primary fleet target; Fari checks whether the architecture generalises. The Week 1
 implementation contains infrastructure and an empty registry, with no robot CRUD,
@@ -83,8 +85,12 @@ non-secret `platform_name` input; real `.tfvars` files are ignored.
 
 `.github/workflows/ci.yml` runs on every push and pull request: the same Python
 checks, Terraform formatting/validation/tflint, gitleaks working-tree/history
-scans, and real-stack smoke checks. **A workflow definition is not evidence of a
-green remote run.** Remote CI must be verified after an authorised GitHub publish.
+scans, and real-stack smoke checks. The [verified main run](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/actions/runs/40047956211)
+passed every gate and real dependency interruption/recovery test. Independent
+[Terraform-format](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/actions/runs/40048051402)
+and [fake-secret](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/actions/runs/40048051816)
+branches failed only their intended gates. Full SHAs and limits are recorded in
+[the validation report](docs/W01_Validation_Report.md). The badge tracks current main.
 
 ## Layout and scope
 
@@ -95,8 +101,8 @@ green remote run.** Remote CI must be verified after an authorised GitHub publis
 
 Public commits must exclude company source documents, credentials, signing private
 keys, proprietary model weights, and customer footage. Only sanitised engineering
-artifacts belong in this repository. Local validation evidence is kept separately
-from the implementation; no GitHub publication is claimed by this local build.
+artifacts belong in this repository. Validation evidence distinguishes observed
+local and GitHub results from the later fleet and cloud targets.
 
 ## Primary references
 
