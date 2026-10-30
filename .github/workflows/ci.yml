@@ -1,4 +1,4 @@
-name: Week 1 foundation checks
+name: Fleet platform checks
 
 on:
   push:
@@ -10,6 +10,23 @@ permissions:
 jobs:
   quality:
     runs-on: ubuntu-latest
+    services:
+      postgres-test:
+        image: postgres:16.15-alpine3.23
+        env:
+          POSTGRES_DB: registry_test
+          POSTGRES_USER: registry_test
+          POSTGRES_PASSWORD: registry-test-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 12
+    env:
+      REGISTRY_TEST_DATABASE_URL: postgresql+psycopg://registry_test:registry-test-only@localhost:5432/registry_test
+      REGISTRY_EXPLAIN_OUTPUT: last-seen-explain.txt
     steps:
       - uses: actions/checkout@v4
         with:
@@ -27,6 +44,8 @@ jobs:
         run: make setup
       - name: Ruff, Black, mypy, pytest and coverage
         run: make check
+      - name: Check OpenAPI snapshot matches the app
+        run: make openapi-check
       - name: Install checksum-verified tflint and gitleaks
         run: python scripts/install_tools.py
       - name: Terraform format, validate and tflint
@@ -39,6 +58,7 @@ jobs:
         run: |
           cp .env.example .env
           make up
+          make migrate
           python scripts/smoke_stack.py
       - name: Show stack logs and retain no data after this ephemeral CI run
         if: always()
@@ -51,4 +71,33 @@ jobs:
         if: always()
         with:
           name: python-coverage
-          path: coverage.xml
+          path: |
+            coverage.xml
+            last-seen-explain.txt
+
+  api-compatibility:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Obtain the base contract
+        id: base
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if git cat-file -e "$BASE_SHA:docs/openapi-v1.json" 2>/dev/null; then
+            git show "$BASE_SHA:docs/openapi-v1.json" > .openapi-base.json
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "No previously published contract on the base branch; initial baseline."
+          fi
+      - name: Reject breaking changes to the published API
+        if: steps.base.outputs.present == 'true'
+        uses: oasdiff/oasdiff-action/breaking@v0.1.12
+        with:
+          base: .openapi-base.json
+          revision: docs/openapi-v1.json
+          fail-on: ERR

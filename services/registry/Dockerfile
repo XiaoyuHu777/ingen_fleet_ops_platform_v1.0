@@ -5,6 +5,8 @@ WORKDIR /app
 COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev --no-install-project
 COPY services ./services
+COPY alembic.ini ./alembic.ini
+COPY migrations ./migrations
 RUN useradd --system --uid 10001 --no-create-home registry
 USER registry
 ENV PATH="/app/.venv/bin:$PATH" PYTHONUNBUFFERED=1

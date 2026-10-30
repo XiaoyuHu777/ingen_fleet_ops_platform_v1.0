@@ -7,6 +7,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
+    operator_api_key: SecretStr | None = None
     postgres_host: str = "postgres"
     postgres_port: int = Field(default=5432, ge=1, le=65535)
     postgres_db: str

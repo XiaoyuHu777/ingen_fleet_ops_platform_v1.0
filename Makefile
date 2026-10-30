@@ -7,7 +7,7 @@ RUN := UV_PYTHON_INSTALL_DIR="$(CURDIR)/.tools/python" UV_CACHE_DIR="$(CURDIR)/.
 TFLINT ?= $(if $(wildcard .tools/bin/tflint),.tools/bin/tflint,tflint)
 GITLEAKS ?= $(if $(wildcard .tools/bin/gitleaks),.tools/bin/gitleaks,gitleaks)
 
-.PHONY: help up ps logs db down setup lint typecheck test check terraform-check secret-scan
+.PHONY: help up ps logs db down migrate setup lint typecheck test check terraform-check secret-scan openapi-check
 
 help:
 	@printf '%s\n' \
@@ -15,6 +15,7 @@ help:
 	  'make ps    Show service status.' \
 	  'make logs  Show the last 50 log lines per service.' \
 	  'make db    Open the PostgreSQL SQL console.' \
+	  'make migrate  Apply registry database migrations.' \
 	  'make down  Remove this stack; keep its named data volumes.' \
 	  'make setup Install locked Python dependencies with uv.' \
 	  'make check Run Python lint, format, types, and tests.' \
@@ -35,6 +36,9 @@ db:
 
 down:
 	$(COMPOSE) down
+
+migrate:
+	$(COMPOSE) exec registry alembic upgrade head
 
 setup:
 	UV_PYTHON_INSTALL_DIR="$(CURDIR)/.tools/python" UV_CACHE_DIR="$(CURDIR)/.uv-cache" $(UV) sync --frozen
@@ -59,3 +63,6 @@ terraform-check:
 
 secret-scan:
 	$(GITLEAKS) dir . --config .gitleaks.toml --redact --no-banner
+
+openapi-check:
+	$(RUN) python -m scripts.openapi_snapshot --check

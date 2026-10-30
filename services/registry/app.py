@@ -9,11 +9,15 @@ from time import perf_counter
 from uuid import uuid4
 
 from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
+from starlette.exceptions import HTTPException
 from starlette.middleware.base import RequestResponseEndpoint
 
+from services.registry.api_v1 import router
 from services.registry.checks import DependencyChecks, LiveDependencyChecks
 from services.registry.config import Settings
+from services.registry.database import make_session_factory
 from services.registry.logging import configure_logging, request_id
 from services.registry.probes import ProbeRunner
 
@@ -39,6 +43,38 @@ def create_app(
         title="InGen Fleet Registry Foundation", version="0.1.0", lifespan=lifespan
     )
 
+    application.state.settings = settings
+    application.state.session_factory = make_session_factory(settings)
+    application.include_router(router)
+
+    @application.exception_handler(HTTPException)
+    async def http_error(request: Request, exc: HTTPException) -> JSONResponse:
+        detail = (
+            exc.detail
+            if isinstance(exc.detail, dict)
+            else {"code": "http_error", "message": str(exc.detail)}
+        )
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"error": {**detail, "request_id": request_id.get()}},
+            headers=exc.headers,
+        )
+
+    @application.exception_handler(RequestValidationError)
+    async def validation_error(
+        request: Request, exc: RequestValidationError
+    ) -> JSONResponse:
+        return JSONResponse(
+            status_code=422,
+            content={
+                "error": {
+                    "code": "validation_error",
+                    "message": "Invalid request",
+                    "request_id": request_id.get(),
+                }
+            },
+        )
+
     @application.middleware("http")
     async def correlate_request(
         request: Request, call_next: RequestResponseEndpoint
@@ -50,6 +86,26 @@ def create_app(
         token = request_id.set(correlation)
         started = perf_counter()
         try:
+            if request.url.path.startswith("/v1/"):
+                limit = 2048 if request.url.path.endswith("/heartbeat") else 65536
+                chunks = []
+                size = 0
+                async for chunk in request.stream():
+                    size += len(chunk)
+                    if size > limit:
+                        return JSONResponse(
+                            status_code=413,
+                            content={
+                                "error": {
+                                    "code": "body_too_large",
+                                    "message": "Request body exceeds limit",
+                                    "request_id": correlation,
+                                }
+                            },
+                            headers={"X-Request-ID": correlation},
+                        )
+                    chunks.append(chunk)
+                request._body = b"".join(chunks)
             response = await call_next(request)
             response.headers["X-Request-ID"] = correlation
             logger.info(
@@ -64,7 +120,13 @@ def create_app(
             logger.exception("Request failed")
             return JSONResponse(
                 status_code=500,
-                content={"status": "error", "request_id": correlation},
+                content={
+                    "error": {
+                        "code": "internal_error",
+                        "message": "Internal server error",
+                        "request_id": correlation,
+                    }
+                },
                 headers={"X-Request-ID": correlation},
             )
         finally:
