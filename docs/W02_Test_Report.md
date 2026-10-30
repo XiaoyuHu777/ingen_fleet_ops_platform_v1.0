@@ -26,15 +26,21 @@ an unrelated table. SQLite is not evidence of PostgreSQL behavior.
 
 ## PostgreSQL, stack, and CI evidence
 
-The two PostgreSQL integration tests were skipped locally: the Docker daemon and
-PostgreSQL server were unavailable. They use a unique temporary schema and cover
-Alembic migrations, PostgreSQL JSONB filtering, API round trips, and a ten-minute
-last-seen index plan. The CI job provisions PostgreSQL and writes the observed
-`EXPLAIN` output as an artifact. The test disables sequential scans to establish
-that the index can serve the predicate; it is not a claim about planner choices or
-performance under production data. No PostgreSQL result or CI success is claimed
-here until the corresponding run completes. The Compose build, migration and
-Week 1 dependency-failure smoke checks likewise require Docker.
+The two PostgreSQL integration tests were skipped locally because the Docker
+and PostgreSQL services were unavailable. They subsequently ran in
+[GitHub Actions run 41067296504](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/actions/runs/41067296504)
+on commit `78d9bf413dc145617d2f5bb2631590223fb0cbba`: **58 passed**, branch
+coverage **93.18%**. The run passed PostgreSQL 16 migration and API integration,
+OpenAPI snapshot verification, Terraform checks, secret scanning, and the real
+Compose stack migration and dependency failure/recovery smoke test. The first PR
+has no published base OpenAPI snapshot, so the compatibility comparison was
+skipped; the new snapshot establishes the baseline for future PRs.
+
+The actual PostgreSQL query plan is preserved in
+[W02_Postgres_Explain.txt](W02_Postgres_Explain.txt). The test disables sequential
+scans to establish that the index can serve the ten-minute predicate; it is not a
+claim about planner choices or performance under production data. The test uses
+a unique temporary schema, not the user's existing data.
 
 Reproduce locally with `make setup`, `make check`, `make openapi-check`, and, for
 the stack, `make up && make migrate && python3 scripts/smoke_stack.py`. For the
