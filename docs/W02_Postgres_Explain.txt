@@ -1,0 +1,15 @@
+Week 2 PostgreSQL index eligibility evidence
+GitHub Actions run: https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/actions/runs/41067296504
+Tested commit: 78d9bf413dc145617d2f5bb2631590223fb0cbba
+Database: PostgreSQL 16.15, isolated test schema
+Query: EXPLAIN SELECT * FROM reported_states WHERE last_seen < now() - interval '10 minutes';
+Setting: SET LOCAL enable_seqscan = off;
+
+Bitmap Heap Scan on reported_states  (cost=4.36..14.83 rows=27 width=886)
+  Recheck Cond: (last_seen < (now() - '00:10:00'::interval))
+  ->  Bitmap Index Scan on ix_reported_states_last_seen  (cost=0.00..4.35 rows=27 width=0)
+        Index Cond: (last_seen < (now() - '00:10:00'::interval))
+
+This proves index eligibility for this predicate with sequential scans discouraged.
+The test uses a small isolated fixture, not a production workload; it does not
+prove the default planner choice or query latency on a populated fleet.
