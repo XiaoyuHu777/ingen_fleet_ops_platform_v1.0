@@ -6,16 +6,21 @@ Week 2 builds on the Week 1 foundation to track robot identity, deployment,
 credentials, reported state, and desired artifact state through a versioned API.
 The Week 2 work is available in [PR #1](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/pull/1); check the PR for its current merge status.
 
-## Review the deliverables
+## Tasks and evidence
 
-| Item | What to review |
-| --- | --- |
-| Requirements and scope | [Week 2 delivery map](../docs/W02_Delivery_Map.md) |
-| API and security | [API contract and threat model](../docs/W02_API_Contract.md) · [OpenAPI snapshot](../docs/openapi-v1.json) |
-| Database | [Models](../services/registry/models.py) · [Alembic migration](../migrations/versions/0001_fleet_registry.py) |
-| Registry API | [Endpoints and authentication](../services/registry/api_v1.py) · [Request and response schemas](../services/registry/schemas.py) |
-| Test evidence | [Test report](../docs/W02_Test_Report.md) · [PostgreSQL EXPLAIN](../docs/W02_Postgres_Explain.txt) · [GitHub Actions run](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/actions/runs/41067296504) |
-| Reflection | [Week 2 log](../weekly/Wk-02-Log.md) |
+| Week 2 task | Result and evidence | Status |
+| --- | --- | --- |
+| Model robots and state | [Robot, enrollment, reported and desired models](../services/registry/models.py) | Implemented and tested |
+| Migrate database and index operator queries | [Migration](../migrations/versions/0001_fleet_registry.py) · [PostgreSQL EXPLAIN](../docs/W02_Postgres_Explain.txt) | PostgreSQL tests passed; EXPLAIN demonstrates index eligibility under the test setting |
+| Build the `/v1` registry API | [Endpoints](../services/registry/api_v1.py) · [Schemas](../services/registry/schemas.py) · [Contract](../docs/W02_API_Contract.md) | Implemented and tested |
+| Protect robot and operator endpoints | [Authentication and threat model](../docs/W02_API_Contract.md#security-and-threat-model) · [Tests](../tests/test_registry.py) | Prototype implemented and tested; production identity remains future work |
+| Check Fari schema generality | [Update-window contract](../docs/W02_API_Contract.md#data-representations) | Windows can be recorded; safety enforcement is future work |
+| Validate API and compatibility | [Generated contract tests](../tests/test_openapi_generated.py) · [Test report](../docs/W02_Test_Report.md) | PostgreSQL and contract tests passed; first OpenAPI comparison skipped without an earlier baseline |
+| Record weekly delivery and reflection | [Delivery map](../docs/W02_Delivery_Map.md) · [Week 2 log](../weekly/Wk-02-Log.md) | Prepared for review; see [PR #1](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/pull/1) for merge status |
+
+The implementation run passed **58 tests with 93.18% branch coverage**:
+[GitHub Actions evidence](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/actions/runs/41067296504).
+The query-plan evidence establishes index eligibility, not production performance.
 
 ## What was added
 
