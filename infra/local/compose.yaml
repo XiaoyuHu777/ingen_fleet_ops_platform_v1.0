@@ -48,8 +48,12 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:?Set MINIO_ROOT_USER in .env}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?Set MINIO_ROOT_PASSWORD in .env}
       MINIO_SECURE: "false"
+      ARTIFACT_BUCKET: ${ARTIFACT_BUCKET:-fleet-artifacts}
+      ARTIFACT_TRUST_DIR: /artifact-trust
       DEPENDENCY_TIMEOUT_SECONDS: ${DEPENDENCY_TIMEOUT_SECONDS:-2}
       READINESS_DEADLINE_SECONDS: ${READINESS_DEADLINE_SECONDS:-4.0}
+    volumes:
+      - ${ARTIFACT_PUBLIC_KEYS_DIR:-../../.week3/keys/public}:/artifact-trust:ro
     ports:
       - "127.0.0.1:${REGISTRY_PORT:-8000}:8000"
     depends_on:

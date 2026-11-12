@@ -19,3 +19,6 @@ infra/terraform/.terraform/
 *.tfplan
 infra/terraform/terraform.tfvars
 *.auto.tfvars
+
+.week3/
+*.pem

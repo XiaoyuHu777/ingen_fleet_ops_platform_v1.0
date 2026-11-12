@@ -44,8 +44,8 @@ setup:
 	UV_PYTHON_INSTALL_DIR="$(CURDIR)/.tools/python" UV_CACHE_DIR="$(CURDIR)/.uv-cache" $(UV) sync --frozen
 
 lint:
-	$(RUN) ruff check services tests scripts
-	$(RUN) black --check services tests scripts
+	$(RUN) ruff check agent pipeline services migrations tests scripts
+	$(RUN) black --check agent pipeline services migrations tests scripts
 
 typecheck:
 	$(RUN) mypy

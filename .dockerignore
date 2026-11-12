@@ -13,3 +13,6 @@ htmlcov
 .coverage
 coverage.xml
 new_task_2026-10-26
+
+.week3/
+*.pem

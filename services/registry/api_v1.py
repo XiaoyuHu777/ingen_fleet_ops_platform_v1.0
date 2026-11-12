@@ -6,7 +6,7 @@ import json
 import secrets
 from collections.abc import Iterator
 from datetime import UTC, datetime
-from typing import Annotated, Any
+from typing import Annotated, Any, NoReturn
 from uuid import UUID, uuid4
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, Response
@@ -55,19 +55,23 @@ def session_for(request: Request) -> Iterator[Session]:
 DB = Annotated[Session, Depends(session_for)]
 
 
-def fail(status: int, code: str, message: str) -> None:
+def fail(status: int, code: str, message: str) -> NoReturn:
     raise HTTPException(status_code=status, detail={"code": code, "message": message})
 
 
-def operator(request: Request, credential: Credential) -> None:
+def is_operator(request: Request, credential: Credential) -> bool:
     configured = request.app.state.settings.operator_api_key
-    if (
-        configured is None
-        or credential is None
-        or not hmac.compare_digest(
-            credential.credentials, configured.get_secret_value()
+    return bool(
+        configured
+        and credential
+        and hmac.compare_digest(
+            credential.credentials.encode(), configured.get_secret_value().encode()
         )
-    ):
+    )
+
+
+def operator(request: Request, credential: Credential) -> None:
+    if not is_operator(request, credential):
         fail(401, "unauthorized", "Valid operator credential required")
 
 

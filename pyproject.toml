@@ -1,7 +1,7 @@
 [project]
 name = "ingen-fleet-ops-platform"
 version = "0.1.0"
-description = "Week 1 robot fleet operations infrastructure foundation"
+description = "Robot fleet operations and signed model artifact registry"
 requires-python = ">=3.11,<3.12"
 dependencies = [
     "fastapi==0.162.0",
@@ -13,9 +13,17 @@ dependencies = [
     "sqlalchemy==2.0.44",
     "alembic==1.17.1",
     "tzdata==2026.5",
+    "cryptography==46.0.5",
 ]
 
 [dependency-groups]
+packaging = [
+    "numpy==2.2.6",
+    "onnx==1.19.1",
+    "onnxruntime==1.22.1",
+    "torch==2.8.0",
+    "transformers==4.55.4",
+]
 dev = [
     "black==26.10.1",
     "httpx==0.28.1",
@@ -28,6 +36,14 @@ dev = [
 
 [tool.uv]
 package = false
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux' and platform_machine == 'x86_64'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
 
 [tool.ruff]
 target-version = "py311"
@@ -44,7 +60,7 @@ line-length = 88
 plugins = ["pydantic.mypy"]
 python_version = "3.11"
 strict = true
-files = ["services", "tests"]
+files = ["agent", "services", "tests"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

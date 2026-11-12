@@ -1,0 +1,7 @@
+This deployment artifact contains an ONNX conversion of hustvl/yolos-tiny.
+Checkpoint: https://huggingface.co/hustvl/yolos-tiny
+Upstream: HUST Vision Lab, https://github.com/hustvl/YOLOS
+Paper: You Only Look at One Sequence, NeurIPS 2021, arXiv:2106.00666.
+The upstream model card identifies the checkpoint license as Apache-2.0.
+InGen Fleet Operations Platform prototype changes: fixed-size ONNX export,
+deployment preprocessing and output contract, and packaging for integrity checks.
