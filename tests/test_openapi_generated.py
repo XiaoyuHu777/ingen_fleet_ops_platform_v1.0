@@ -61,6 +61,8 @@ def sample(schema: dict[str, Any]) -> Any:
         alternatives = schema["anyOf"]
         null = next((item for item in alternatives if item.get("type") == "null"), None)
         return None if null is not None else sample(alternatives[0])
+    if "enum" in schema:
+        return schema["enum"][0]
     kind = schema.get("type")
     if kind == "object":
         props = schema.get("properties", {})
@@ -96,10 +98,10 @@ def required_cases() -> list[tuple[str, str, str]]:
     cases: list[tuple[str, str, str]] = []
     for path, method in operations():
         operation = openapi()["paths"][path][method]
-        body = operation.get("requestBody", {})
-        if not body:
+        content = operation.get("requestBody", {}).get("content", {})
+        if "application/json" not in content:
             continue
-        schema = resolve(body["content"]["application/json"]["schema"])
+        schema = resolve(content["application/json"]["schema"])
         cases.extend((path, method, name) for name in schema.get("required", []))
     return cases
 
@@ -130,7 +132,7 @@ def validate_response(path: str, method: str, response: Any) -> None:
 
 
 def path_for(path: str, robot_id: str) -> str:
-    path = path.replace("{robot_id}", robot_id)
+    path = path.replace("{robot_id}", robot_id).replace("{digest}", "a" * 64)
     if "{" in path:
         raise AssertionError(f"Add a generated example for new path parameter: {path}")
     return path
@@ -138,7 +140,7 @@ def path_for(path: str, robot_id: str) -> str:
 
 @pytest.mark.parametrize("path,method", operations(), ids=lambda value: str(value))
 def test_generated_missing_auth(client: TestClient, path: str, method: str) -> None:
-    # A syntactically valid UUID lets the request reach authentication.
+    # Syntactically valid identifiers let each request reach authentication.
     url = path_for(path, "00000000-0000-4000-8000-000000000001")
     response = client.request(method, url, json={})
     assert response.status_code == 401, response.text
