@@ -4,9 +4,9 @@
 
 One shared control plane for robot model operations. Aido Rover is the primary
 fleet target; Fari checks whether the architecture generalises. Week 1 established
-the local foundation. Week 2 adds a fleet registry with distinct reported and
-desired state, per-robot credentials, and a versioned API. Artifact publication,
-the robot agent, rollouts, and cloud deployment remain future work.
+the local foundation. Week 2 added a fleet registry with distinct reported and
+desired state and per-robot credentials. Week 3 adds reproducible ONNX
+packaging, Ed25519 verification, and a signed artifact registry.
 
 ## Review by week
 
@@ -14,7 +14,8 @@ the robot agent, rollouts, and cloud deployment remain future work.
 | --- | --- | --- |
 | **Week 1** | Architecture, local infrastructure, and CI foundation | [Week 1 review](week-01/README.md) — deliverables, decisions, validation, and the original code snapshot |
 | **Week 2** | Fleet registry, API contract, and robot authentication | [Week 2 review](week-02/README.md) — implementation, migration, contract, tests, and weekly log |
-| Week 3 onward | Future work | Review entries will be added as work is completed. |
+| **Week 3** | Model packaging and signed artifact registry | [Week 3 review](week-03/README.md) — model card, demo, verification and evidence |
+| Week 4 onward | Future work | Review entries will be added as work is completed. |
 
 Each review page links to that week's evidence. Source code remains in the
 shared service tree because subsequent weeks build on the previous work.
@@ -120,15 +121,17 @@ branches failed only their intended gates. Full SHAs and limits are recorded in
 
 ## Layout and scope
 
-`services/registry/` contains the Week 2 API and database models; `migrations/`
+`services/registry/` contains the fleet and artifact APIs and database models; `migrations/`
 contains Alembic schema changes. `tests/`, `infra/local/`, `infra/terraform/`,
-and `scripts/` support validation and local operation. `services/controller/`,
-`agent/`, `pipeline/`, `policy/`, and `sim/` reserve later component boundaries.
+and `scripts/` support validation and local operation. `pipeline/` builds
+and signs model artifacts, and `agent/` verifies them. `services/controller/`,
+`policy/`, and `sim/` reserve later component boundaries.
 Architecture decisions are in
 `docs/adr/`; the [weekly review index](weekly/README.md) links each week’s
 deliverables. The [Week 2 API contract and threat model](docs/W02_API_Contract.md)
 describe every endpoint, authentication, curl examples, and current limitations.
-The live OpenAPI specification is at `/openapi.json` and interactive reference at
+The [Week 3 artifact contract](docs/W03_Artifact_Contract.md) includes the
+build, sign, publish, and verify commands. The live OpenAPI specification is at `/openapi.json` and interactive reference at
 `/docs`. Run `make migrate` before using the fleet endpoints.
 
 Public commits must exclude company source documents, credentials, signing private

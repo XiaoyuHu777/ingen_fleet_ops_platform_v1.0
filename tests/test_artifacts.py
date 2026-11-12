@@ -8,6 +8,7 @@ from uuid import uuid4
 import pytest
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 from fastapi.testclient import TestClient
+from jsonschema import Draft202012Validator, FormatChecker  # type: ignore[import-untyped]
 from pydantic import SecretStr
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -317,7 +318,8 @@ def test_range_download_and_lifecycle(
 ) -> None:
     client, store = artifact_client
     body, digest = make_signed(tmp_path, keys)
-    assert client.post("/v1/artifacts", content=body, headers=UPLOAD).status_code == 201
+    publication = client.post("/v1/artifacts", content=body, headers=UPLOAD)
+    assert publication.status_code == 201
     url = f"/v1/artifacts/{digest}"
     enrolled = client.post(
         "/v1/robots",
@@ -395,3 +397,37 @@ def test_range_download_and_lifecycle(
         event["actor"] == "operator" and event["occurred_at"].endswith("Z")
         for event in events
     )
+
+    document = client.get("/openapi.json").json()
+    collection = "/v1/artifacts"
+    resource = collection + "/{digest}"
+    for path, method, status, media_type, body_sample in (
+        (collection, "post", "201", "application/json", publication.json()),
+        (
+            collection,
+            "get",
+            "200",
+            "application/json",
+            client.get(collection, headers=OPERATOR).json(),
+        ),
+        (
+            resource + "/lifecycle",
+            "patch",
+            "200",
+            "application/json",
+            client.get(collection, headers=OPERATOR).json()["items"][0],
+        ),
+        (resource + "/audit", "get", "200", "application/json", last_events),
+        (resource + "/download", "get", "206", MEDIA_TYPE, first.content),
+    ):
+        schema = document["paths"][path][method]["responses"][status]["content"][
+            media_type
+        ]["schema"]
+        if media_type == MEDIA_TYPE:
+            assert schema == {"type": "string", "format": "binary"}
+            assert first.headers["Content-Type"] == media_type
+        else:
+            Draft202012Validator(
+                {**schema, "components": document["components"]},
+                format_checker=FormatChecker(),
+            ).validate(body_sample)
