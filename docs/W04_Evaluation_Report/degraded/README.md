@@ -1,22 +1,22 @@
 # Detection evaluation
 
-- Artifact SHA-256 `ae8c38ed745d565f1397a209912614d9bb6997934fcae6eb7f2d3e2bf42c7a90`
+- Artifact SHA-256 `0c6f0fc1ec8159e9f4b0107ed0daef0ac3cfd6ef9585e214c5b808fd11dc7510`
 - Dataset SHA-256 `f75b1e7ad2afd597b90530b236caee30d8192bd325634e30421513e2b127cadc`
 - Dataset labels `coco2017-val-ingen-w04.2`
 - Policy SHA-256 `bf2150ee659af1d04ce9ed2ae799482ad135403b7b5f003d20f3c6e0f42448d3`
 - Benchmark `cpu-1thread-5warmup-v1/Darwin 24.6.0 arm64 Apple M4 Pro/ORT 1.22.1`
-- Peak process RSS 329.8 MiB
+- Peak process RSS 320.3 MiB
 
 | Slice | Images | Boxes | mAP 50–95 | AP50 | Images with FP | p50 ms | p95 ms |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| overall | 140 | 547 | 26.68% | 38.35% | 65.71% | 61.52 | 64.00 |
-| nominal | 20 | 61 | 45.91% | 60.55% | 60.00% | 61.59 | 64.39 |
-| low_light | 20 | 61 | 31.86% | 48.52% | 70.00% | 60.99 | 62.40 |
-| motion_blur | 20 | 61 | 33.38% | 43.71% | 60.00% | 61.75 | 62.72 |
-| sensor_noise | 20 | 61 | 43.51% | 58.90% | 60.00% | 60.99 | 62.80 |
-| small_thin | 20 | 176 | 27.97% | 40.06% | 95.00% | 61.68 | 64.04 |
-| empty_scene | 16 | 0 | n/a | n/a | 0.00% | 62.44 | 63.89 |
-| fari_indoor | 24 | 127 | 32.82% | 45.63% | 95.83% | 61.39 | 63.86 |
+| overall | 140 | 547 | 26.68% | 38.35% | 65.71% | 61.48 | 63.51 |
+| nominal | 20 | 61 | 45.91% | 60.55% | 60.00% | 61.20 | 64.47 |
+| low_light | 20 | 61 | 31.86% | 48.52% | 70.00% | 61.95 | 63.07 |
+| motion_blur | 20 | 61 | 33.38% | 43.71% | 60.00% | 60.81 | 61.96 |
+| sensor_noise | 20 | 61 | 43.51% | 58.90% | 60.00% | 62.22 | 63.35 |
+| small_thin | 20 | 176 | 27.97% | 40.06% | 95.00% | 62.20 | 63.56 |
+| empty_scene | 16 | 0 | n/a | n/a | 0.00% | 60.34 | 61.89 |
+| fari_indoor | 24 | 127 | 32.82% | 45.63% | 95.83% | 61.29 | 64.90 |
 
 The runner ranks named foreground scores above the background score, caps each image at 100 detections and averages 101-point interpolated AP over IoU 0.50–0.95 and classes with ground truth. Empty frames use false-positive image rate at confidence 0.50. ONNX inference timing excludes decode, preprocessing and reporting. RSS is the OS-reported process high-water mark.
 

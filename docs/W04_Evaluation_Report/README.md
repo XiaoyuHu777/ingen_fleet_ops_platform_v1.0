@@ -14,8 +14,8 @@ remained published after the gate rejected it.
 | Low-light mAP 50–95 | 42.27% | 31.86% | **Rejected.** Full-precision drop 10.42 points against a 2.00-point limit, and below the 35.00% absolute floor. |
 | Fari indoor mAP 50–95 | 33.32% | 32.82% | Within the 2.00-point regression limit. |
 | Known failure `small_thin-189820` | 34 false positives | 35 false positives | **Rejected.** Limit 34. |
-| CPU inference p95 | 63.66 ms | 64.00 ms | Within the 10% increase limit |
-| Peak process RSS | 296.8 MiB | 329.8 MiB | Recorded for review |
+| CPU inference p95 | 63.66 ms | 63.51 ms | Within the 10% increase limit |
+| Peak process RSS | 296.8 MiB | 320.3 MiB | Recorded for review |
 | Robot Range response | 206 | 403 | Only the approved baseline was available to the enrolled Fari |
 
 - [Baseline metrics and worst cases](baseline/README.md) · [JSON](baseline/report.json)
