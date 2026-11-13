@@ -15,22 +15,26 @@ class DependencyChecks(Protocol):
     def object_store(self) -> None: ...
 
 
+def minio_client(settings: Settings) -> Minio:
+    return Minio(
+        settings.minio_endpoint,
+        access_key=settings.minio_root_user,
+        secret_key=settings.minio_root_password.get_secret_value(),
+        secure=settings.minio_secure,
+        http_client=urllib3.PoolManager(
+            timeout=urllib3.Timeout(
+                connect=settings.dependency_timeout_seconds,
+                read=settings.dependency_timeout_seconds,
+            ),
+            retries=False,
+        ),
+    )
+
+
 class LiveDependencyChecks:
     def __init__(self, settings: Settings) -> None:
         self.settings = settings
-        self.object_client = Minio(
-            settings.minio_endpoint,
-            access_key=settings.minio_root_user,
-            secret_key=settings.minio_root_password.get_secret_value(),
-            secure=settings.minio_secure,
-            http_client=urllib3.PoolManager(
-                timeout=urllib3.Timeout(
-                    connect=settings.dependency_timeout_seconds,
-                    read=settings.dependency_timeout_seconds,
-                ),
-                retries=False,
-            ),
-        )
+        self.object_client = minio_client(settings)
 
     def database(self) -> None:
         statement_timeout_ms = self.settings.dependency_timeout_seconds * 1000

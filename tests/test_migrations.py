@@ -13,6 +13,7 @@ from fastapi.testclient import TestClient
 from pydantic import SecretStr
 from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.engine import Connection
+from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import sessionmaker
 
 from services.registry.app import create_app
@@ -31,11 +32,25 @@ def exercise_migration(connection: Connection) -> None:
     connection.execute(text("INSERT INTO existing_data VALUES (42)"))
     connection.commit()
     config = config_for(connection)
+    command.upgrade(config, "0001_fleet_registry")
+    connection.execute(text("""
+        INSERT INTO robots (id, platform, hardware_profile, site, cohort_labels)
+        VALUES ('00000000000000000000000000000000', 'Rover', '{}', 'test', '[]')
+    """))
+    connection.commit()
     command.upgrade(config, "head")
-    inspector = inspect(connection)
-    assert {"robots", "enrollments", "reported_states", "desired_states"} <= set(
-        inspector.get_table_names()
+    assert (
+        connection.execute(text("SELECT platform FROM robots")).scalar_one() == "Rover"
     )
+    inspector = inspect(connection)
+    assert {
+        "robots",
+        "enrollments",
+        "reported_states",
+        "desired_states",
+        "artifacts",
+        "artifact_audit",
+    } <= set(inspector.get_table_names())
     assert "ix_reported_states_last_seen" in {
         index["name"] for index in inspector.get_indexes("reported_states")
     }
@@ -44,9 +59,36 @@ def exercise_migration(connection: Connection) -> None:
     assert not [diff for diff in diffs if diff[0] != "remove_table"]
     assert connection.execute(text("SELECT id FROM existing_data")).scalar_one() == 42
     connection.commit()
+    assert_append_only(connection)
     command.downgrade(config, "base")
     assert "robots" not in inspect(connection).get_table_names()
     assert connection.execute(text("SELECT id FROM existing_data")).scalar_one() == 42
+    connection.commit()
+
+
+def assert_append_only(connection: Connection) -> None:
+    operations = [
+        "UPDATE artifact_audit SET reason = 'changed'",
+        "DELETE FROM artifact_audit",
+    ]
+    if connection.dialect.name == "postgresql":
+        operations.append("TRUNCATE artifact_audit")
+    connection.execute(text("""
+        INSERT INTO artifacts
+            (digest, name, version, signing_key_id, bundle_sha256, size_bytes, state)
+        VALUES ('digest', 'test', '1.0.0', 'key', 'bundle', 42, 'published')
+    """))
+    connection.execute(text("""
+        INSERT INTO artifact_audit (artifact_digest, to_state, actor, reason)
+        VALUES ('digest', 'published', 'operator', 'test')
+    """))
+    for operation in operations:
+        with pytest.raises(DBAPIError, match="append-only"), connection.begin_nested():
+            connection.execute(text(operation))
+    assert (
+        connection.execute(text("SELECT reason FROM artifact_audit")).scalar_one()
+        == "test"
+    )
     connection.commit()
 
 
@@ -106,6 +148,7 @@ def test_postgres_migration_and_last_seen_index(
 
         Path(output).write_text(plan_text + "\n")
     postgres_connection.rollback()
+    assert_append_only(postgres_connection)
     command.downgrade(config, "base")
 
 

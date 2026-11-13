@@ -1,5 +1,7 @@
 """Environment-based configuration without committed credentials."""
 
+from pathlib import Path
+
 from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -19,3 +21,7 @@ class Settings(BaseSettings):
     minio_secure: bool = False
     dependency_timeout_seconds: int = Field(default=2, ge=1, le=10)
     readiness_deadline_seconds: float = Field(default=4.0, gt=0, le=4.0)
+    artifact_bucket: str = Field(
+        default="fleet-artifacts", pattern=r"^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$"
+    )
+    artifact_trust_dir: Path | None = None

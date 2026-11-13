@@ -124,15 +124,17 @@ branches failed only their intended gates. Full SHAs and limits are recorded in
 
 ## Layout and scope
 
-`services/registry/` contains the Week 2 API and database models; `migrations/`
+`services/registry/` contains the fleet and artifact APIs and database models; `migrations/`
 contains Alembic schema changes. `tests/`, `infra/local/`, `infra/terraform/`,
-and `scripts/` support validation and local operation. `services/controller/`,
-`agent/`, `pipeline/`, `policy/`, and `sim/` reserve later component boundaries.
+and `scripts/` support validation and local operation. `pipeline/` builds
+and signs model artifacts, and `agent/` verifies them. `services/controller/`,
+`policy/`, and `sim/` reserve later component boundaries.
 Architecture decisions are in
 `docs/adr/`; the [weekly review index](weekly/README.md) links each week’s
 deliverables. The [Week 2 API contract and threat model](docs/W02_API_Contract.md)
 describe every endpoint, authentication, curl examples, and current limitations.
-The live OpenAPI specification is at `/openapi.json` and interactive reference at
+The [Week 3 artifact contract](docs/W03_Artifact_Contract.md) includes the
+build, sign, publish, and verify commands. The live OpenAPI specification is at `/openapi.json` and interactive reference at
 `/docs`. Run `make migrate` before using the fleet endpoints.
 
 Public commits must exclude company source documents, credentials, signing private

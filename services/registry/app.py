@@ -1,4 +1,4 @@
-"""The Week 1 empty registry exposes only health and readiness endpoints."""
+"""Compose the fleet and artifact registry API with dependency readiness probes."""
 
 import asyncio
 import logging
@@ -15,7 +15,13 @@ from starlette.exceptions import HTTPException
 from starlette.middleware.base import RequestResponseEndpoint
 
 from services.registry.api_v1 import router
-from services.registry.checks import DependencyChecks, LiveDependencyChecks
+from services.registry.artifact_api import router as artifact_router
+from services.registry.artifact_store import ArtifactStore, MinioArtifactStore
+from services.registry.checks import (
+    DependencyChecks,
+    LiveDependencyChecks,
+    minio_client,
+)
 from services.registry.config import Settings
 from services.registry.database import make_session_factory
 from services.registry.logging import configure_logging, request_id
@@ -26,7 +32,9 @@ REQUEST_ID_PATTERN = re.compile(r"^[A-Za-z0-9._-]{1,128}$")
 
 
 def create_app(
-    settings: Settings | None = None, checks: DependencyChecks | None = None
+    settings: Settings | None = None,
+    checks: DependencyChecks | None = None,
+    artifact_store: ArtifactStore | None = None,
 ) -> FastAPI:
     settings = settings or Settings()
     probes = checks or LiveDependencyChecks(settings)
@@ -45,7 +53,11 @@ def create_app(
 
     application.state.settings = settings
     application.state.session_factory = make_session_factory(settings)
+    application.state.artifact_store = artifact_store or MinioArtifactStore(
+        minio_client(settings), settings.artifact_bucket
+    )
     application.include_router(router)
+    application.include_router(artifact_router)
 
     @application.exception_handler(HTTPException)
     async def http_error(request: Request, exc: HTTPException) -> JSONResponse:
@@ -86,7 +98,11 @@ def create_app(
         token = request_id.set(correlation)
         started = perf_counter()
         try:
-            if request.url.path.startswith("/v1/"):
+            artifact_upload = (
+                request.method == "POST"
+                and request.url.path.rstrip("/") == "/v1/artifacts"
+            )
+            if request.url.path.startswith("/v1/") and not artifact_upload:
                 limit = 2048 if request.url.path.endswith("/heartbeat") else 65536
                 chunks = []
                 size = 0

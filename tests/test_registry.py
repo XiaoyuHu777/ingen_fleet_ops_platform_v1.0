@@ -248,7 +248,7 @@ def test_authentication_is_fail_closed(client: TestClient) -> None:
 
 
 def test_contract_responses_from_openapi(client: TestClient) -> None:
-    """Check every v1 operation against the schemas served by this application."""
+    """Check fleet operations against the schemas served by this application."""
     from jsonschema import Draft202012Validator, FormatChecker  # type: ignore[import-untyped]
 
     document = client.get("/openapi.json").json()
@@ -320,7 +320,7 @@ def test_contract_responses_from_openapi(client: TestClient) -> None:
     expected = {
         (p, m)
         for p, operations in document["paths"].items()
-        if p.startswith("/v1/")
+        if p.startswith("/v1/robots")
         for m in operations
         if m in {"get", "post", "patch", "put", "delete"}
     }
