@@ -5,9 +5,10 @@
 One shared control plane for robot model operations. Aido Rover is the primary
 fleet target. Fari helps check whether the architecture generalises. Week 1
 established the local foundation. Week 2 added a versioned fleet registry with
-separate reported and desired state and per-robot credentials. Week 3 adds
+separate reported and desired state and per-robot credentials. Week 3 covers
 reproducible ONNX packaging, Ed25519 verification, and a signed artifact registry.
-Week 4 adds a reproducible detection benchmark and an audited promotion gate.
+Week 4 adds a detection benchmark with 140 images across seven slices and an
+audited promotion gate that checks regressions before operator approval.
 
 ## Review by week
 
@@ -16,7 +17,7 @@ Week 4 adds a reproducible detection benchmark and an audited promotion gate.
 | **Week 1** | Architecture, local infrastructure, and CI foundation | [Week 1 review](week-01/README.md) — deliverables, decisions, validation, and the original code snapshot |
 | **Week 2** | Fleet registry, API contract, and robot authentication | [Week 2 review](week-02/README.md) — implementation, migration, contract, tests, and weekly log |
 | **Week 3** | Model packaging and signed artifact registry | [Week 3 review](week-03/README.md) · [PR #2](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/pull/2) |
-| **Week 4** | Evaluation gate and failure case regressions | [Week 4 review](week-04/README.md) |
+| **Week 4** | Evaluation gate and failure-case regression suite | Local validation approved the baseline and rejected the degraded candidate. 88 tests passed with 89.11% branch-aware Registry coverage. [Week 4 review](week-04/README.md) · [PR #3](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/pull/3). |
 | Week 5 onward | Future work | Review entries will be added as work is completed. |
 
 Each review page links to that week's evidence. Source code remains in the
