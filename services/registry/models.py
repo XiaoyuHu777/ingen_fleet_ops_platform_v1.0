@@ -127,6 +127,35 @@ class ArtifactAudit(Base):
     to_state: Mapped[str] = mapped_column(String(16), nullable=False)
     actor: Mapped[str] = mapped_column(String(200), nullable=False)
     reason: Mapped[str] = mapped_column(String(1000), nullable=False)
+    evaluation_id: Mapped[int | None] = mapped_column(Integer)
+    occurred_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class ArtifactEvaluation(Base):
+    __tablename__ = "artifact_evaluations"
+    __table_args__ = (
+        UniqueConstraint(
+            "artifact_digest",
+            "policy_digest",
+            "evidence_digest",
+            name="uq_artifact_evaluations_evidence",
+        ),
+        Index("ix_artifact_evaluations_artifact_id", "artifact_digest", "id"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    artifact_digest: Mapped[str] = mapped_column(
+        ForeignKey("artifacts.digest", ondelete="RESTRICT"), nullable=False
+    )
+    policy_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    evidence_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    baseline_digest: Mapped[str | None] = mapped_column(
+        ForeignKey("artifacts.digest", ondelete="RESTRICT")
+    )
+    evidence: Mapped[dict[str, Any]] = mapped_column(json_type, nullable=False)
+    violations: Mapped[list[str]] = mapped_column(json_type, nullable=False)
     occurred_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )

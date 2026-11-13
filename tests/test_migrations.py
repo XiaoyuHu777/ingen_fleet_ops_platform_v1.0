@@ -50,6 +50,7 @@ def exercise_migration(connection: Connection) -> None:
         "desired_states",
         "artifacts",
         "artifact_audit",
+        "artifact_evaluations",
     } <= set(inspector.get_table_names())
     assert "ix_reported_states_last_seen" in {
         index["name"] for index in inspector.get_indexes("reported_states")
@@ -70,9 +71,11 @@ def assert_append_only(connection: Connection) -> None:
     operations = [
         "UPDATE artifact_audit SET reason = 'changed'",
         "DELETE FROM artifact_audit",
+        "UPDATE artifact_evaluations SET policy_digest = 'changed'",
+        "DELETE FROM artifact_evaluations",
     ]
     if connection.dialect.name == "postgresql":
-        operations.append("TRUNCATE artifact_audit")
+        operations.extend(("TRUNCATE artifact_audit", "TRUNCATE artifact_evaluations"))
     connection.execute(text("""
         INSERT INTO artifacts
             (digest, name, version, signing_key_id, bundle_sha256, size_bytes, state)
@@ -81,6 +84,11 @@ def assert_append_only(connection: Connection) -> None:
     connection.execute(text("""
         INSERT INTO artifact_audit (artifact_digest, to_state, actor, reason)
         VALUES ('digest', 'published', 'operator', 'test')
+    """))
+    connection.execute(text("""
+        INSERT INTO artifact_evaluations
+            (artifact_digest, policy_digest, evidence_digest, evidence, violations)
+        VALUES ('digest', 'policy', 'evidence', '{}', '[]')
     """))
     for operation in operations:
         with pytest.raises(DBAPIError, match="append-only"), connection.begin_nested():

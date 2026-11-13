@@ -1,5 +1,6 @@
 """Publish and serve signed bundles and track their deployment lifecycle."""
 
+import hmac
 import re
 from datetime import UTC, datetime
 from typing import Annotated, Literal
@@ -29,16 +30,28 @@ from agent.artifacts import (
     SemVer,
     sha256,
 )
+from agent.evaluation import Evaluation
 from agent.verify import load_trust, verify_bundle
 from services.registry.api_v1 import DB, Credential, fail, is_operator, operator
 from services.registry.artifact_store import MEDIA_TYPE, ArtifactStore, StoreUnavailable
-from services.registry.models import Artifact, ArtifactAudit, Enrollment
+from services.registry.evaluation_gate import (
+    active_policy,
+    approval_evidence,
+    lock_model,
+    record,
+)
+from services.registry.models import (
+    Artifact,
+    ArtifactAudit,
+    ArtifactEvaluation,
+    Enrollment,
+)
 from services.registry.schemas import ErrorEnvelope
 
 State = Literal["published", "evaluated", "approved", "deprecated", "revoked"]
 ArtifactDigest = Annotated[HexDigest, Path()]
 TRANSITIONS = {
-    "published": {"evaluated", "revoked"},
+    "published": {"revoked"},
     "evaluated": {"approved", "revoked"},
     "approved": {"deprecated", "revoked"},
     "deprecated": {"revoked"},
@@ -104,6 +117,7 @@ class AuditOut(BaseModel):
     to_state: State
     actor: str
     reason: str
+    evaluation_id: int | None = None
     occurred_at: datetime
 
     @field_validator("occurred_at")
@@ -268,11 +282,91 @@ def list_artifacts(
     )
 
 
+class EvaluationOut(BaseModel):
+    id: int
+    artifact_digest: HexDigest
+    policy_digest: HexDigest
+    evidence_digest: HexDigest
+    baseline_digest: HexDigest | None
+    passed: bool
+    violations: list[str]
+    evidence: Evaluation
+    occurred_at: datetime
+
+
+def evaluation_out(row: ArtifactEvaluation) -> EvaluationOut:
+    return EvaluationOut(
+        id=row.id,
+        artifact_digest=row.artifact_digest,
+        policy_digest=row.policy_digest,
+        evidence_digest=row.evidence_digest,
+        baseline_digest=row.baseline_digest,
+        passed=not row.violations,
+        violations=row.violations,
+        evidence=Evaluation.model_validate(row.evidence),
+        occurred_at=AuditOut.normalize_timestamp(row.occurred_at),
+    )
+
+
+def evaluator(request: Request, credential: Credential) -> None:
+    settings = request.app.state.settings
+    key = settings.evaluator_api_key
+    operator_key = settings.operator_api_key
+    if (
+        not credential
+        or not key
+        or (operator_key and key == operator_key)
+        or not hmac.compare_digest(
+            credential.credentials.encode(), key.get_secret_value().encode()
+        )
+    ):
+        fail(401, "evaluator_required", "A dedicated evaluator credential is required")
+
+
+@router.post(
+    "/{digest}/evaluations",
+    dependencies=[Depends(evaluator)],
+    status_code=201,
+    responses={
+        200: {"model": EvaluationOut, "description": "Identical evidence replay"}
+    },
+)
+def submit_evaluation(
+    digest: ArtifactDigest,
+    evidence: Evaluation,
+    request: Request,
+    response: Response,
+    db: DB,
+) -> EvaluationOut:
+    settings = request.app.state.settings
+    if evidence.artifact_digest != digest:
+        fail(
+            422,
+            "digest_mismatch",
+            "Evaluation evidence belongs to a different artifact",
+        )
+    row = lock_model(db, digest)
+    policy, policy_digest = active_policy(settings.gate_policy_path)
+    decision, created = record(db, row, policy, policy_digest, evidence)
+    response.status_code = 201 if created else 200
+    return evaluation_out(decision)
+
+
+@router.get("/{digest}/evaluations/{evaluation_id}", dependencies=operator_only)
+def read_evaluation(
+    digest: ArtifactDigest, evaluation_id: Annotated[int, Path(ge=1)], db: DB
+) -> EvaluationOut:
+    row = db.get(ArtifactEvaluation, evaluation_id)
+    if row is None or row.artifact_digest != digest:
+        fail(404, "evaluation_not_found", "Evaluation record not found")
+    return evaluation_out(row)
+
+
 @router.patch("/{digest}/lifecycle", dependencies=operator_only)
 def change_lifecycle(
-    digest: ArtifactDigest, change: LifecycleChange, db: DB
+    digest: ArtifactDigest, change: LifecycleChange, db: DB, request: Request
 ) -> ArtifactOut:
-    row = find_artifact(db, digest)
+    row = lock_model(db, digest)
     if (
         row.state != change.expected_state
         or change.state not in TRANSITIONS[change.expected_state]
@@ -282,6 +376,13 @@ def change_lifecycle(
             "invalid_transition",
             "Current state or lifecycle transition is invalid",
         )
+    evaluation_id = None
+    if change.state == "approved":
+        policy, policy_digest = active_policy(
+            request.app.state.settings.gate_policy_path
+        )
+        evidence = approval_evidence(db, row, policy, policy_digest)
+        evaluation_id = evidence.id
     changed = db.execute(
         update(Artifact)
         .where(Artifact.digest == digest, Artifact.state == change.expected_state)
@@ -297,6 +398,7 @@ def change_lifecycle(
             to_state=change.state,
             actor="operator",
             reason=change.reason,
+            evaluation_id=evaluation_id,
         )
     )
     db.commit()

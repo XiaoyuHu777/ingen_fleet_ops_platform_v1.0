@@ -63,7 +63,6 @@ jobs:
           python scripts/smoke_stack.py
       - name: Build twice, sign, publish, resume and reject tampering
         run: |
-          uv sync --locked --group packaging
           .venv/bin/python -m pipeline.package fetch .week3/checkpoint
           .venv/bin/python -m pipeline.package benchmark --checkpoint .week3/checkpoint --out .week3/benchmark.json
           for build in first second; do
@@ -73,6 +72,18 @@ jobs:
           cmp .week3/first/payload.tar .week3/second/payload.tar
           .venv/bin/python -m pipeline.sign sign .week3/first --key .week3/keys/signing.pem --out .week3/artifact.tar
           .venv/bin/python -m scripts.artifact_smoke .week3/artifact.tar --trust .week3/keys/public
+      - name: Evaluate and gate the signed baseline and degraded artifact
+        run: |
+          .venv/bin/python -m eval.golden.fetch
+          .venv/bin/python -m pipeline.package benchmark --checkpoint .week3/checkpoint --config pipeline/yolos-tiny-degraded.json --out .week4/degraded-benchmark.json
+          .venv/bin/python -m pipeline.package build --checkpoint .week3/checkpoint --config pipeline/yolos-tiny-degraded.json --benchmark .week4/degraded-benchmark.json --out .week4/degraded
+          .venv/bin/python -m pipeline.sign sign .week4/degraded --key .week3/keys/signing.pem --out .week4/degraded.tar
+          .venv/bin/python -m pipeline.evaluate .week3/artifact.tar --trust .week3/keys/public --out .week4/reports/baseline
+          .venv/bin/python -m pipeline.evaluate .week4/degraded.tar --trust .week3/keys/public --out .week4/reports/degraded
+          set -a
+          . ./.env
+          set +a
+          .venv/bin/python -m scripts.evaluation_smoke .week3/artifact.tar .week4/degraded.tar --reports .week4/reports --out .week4/reports/registry-evidence.json
       - name: Show stack logs and retain no data after this ephemeral CI run
         if: always()
         run: |
@@ -89,6 +100,7 @@ jobs:
             last-seen-explain.txt
             .week3/first/manifest.json
             .week3/benchmark.json
+            .week4/reports
           include-hidden-files: true
 
   api-compatibility:

@@ -10,6 +10,8 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     operator_api_key: SecretStr | None = None
+    evaluator_api_key: SecretStr | None = None
+    gate_policy_path: Path | None = None
     postgres_host: str = "postgres"
     postgres_port: int = Field(default=5432, ge=1, le=65535)
     postgres_db: str

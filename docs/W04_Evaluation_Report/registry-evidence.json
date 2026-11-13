@@ -1,0 +1,294 @@
+{
+  "baseline": {
+    "artifact_digest": "0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+    "baseline_digest": null,
+    "evidence": {
+      "artifact_digest": "0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "benchmark_profile": "cpu-1thread-5warmup-v1/Darwin 24.6.0 arm64 Apple M4 Pro/ORT 1.22.1",
+      "dataset_digest": "f75b1e7ad2afd597b90530b236caee30d8192bd325634e30421513e2b127cadc",
+      "known_cases": {
+        "empty_scene-000001": {
+          "false_positives": 0,
+          "missed": 0
+        },
+        "fari_indoor-298396": {
+          "false_positives": 24,
+          "missed": 21
+        },
+        "low_light-185409": {
+          "false_positives": 23,
+          "missed": 4
+        },
+        "motion_blur-185409": {
+          "false_positives": 11,
+          "missed": 7
+        },
+        "small_thin-189820": {
+          "false_positives": 34,
+          "missed": 10
+        }
+      },
+      "overall": {
+        "ap50": 0.39064823929206804,
+        "boxes": 547,
+        "false_positive_image_rate": 0.6428571428571429,
+        "images": 140,
+        "map": 0.2779881483298476,
+        "p50_ms": 60.92347950107069,
+        "p95_ms": 63.66495385227608
+      },
+      "peak_rss_bytes": 311230464,
+      "report_sha256": "5922b36b12ae85bb1ea071b9e2626f78445692ba8e51242c8b8203af42cfac62",
+      "schema_version": 1,
+      "slices": {
+        "empty_scene": {
+          "ap50": null,
+          "boxes": 0,
+          "false_positive_image_rate": 0.0,
+          "images": 16,
+          "map": null,
+          "p50_ms": 61.77754149757675,
+          "p95_ms": 67.61763524991693
+        },
+        "fari_indoor": {
+          "ap50": 0.4457851118445177,
+          "boxes": 127,
+          "false_positive_image_rate": 0.9166666666666666,
+          "images": 24,
+          "map": 0.33321600638559895,
+          "p50_ms": 60.914125497220084,
+          "p95_ms": 63.191295549768256
+        },
+        "low_light": {
+          "ap50": 0.5626189732406907,
+          "boxes": 61,
+          "false_positive_image_rate": 0.55,
+          "images": 20,
+          "map": 0.42273353083262566,
+          "p50_ms": 60.08649950308609,
+          "p95_ms": 61.56618510212866
+        },
+        "motion_blur": {
+          "ap50": 0.4570101936971561,
+          "boxes": 61,
+          "false_positive_image_rate": 0.6,
+          "images": 20,
+          "map": 0.34577758560206046,
+          "p50_ms": 61.65345849876758,
+          "p95_ms": 63.26499934584717
+        },
+        "nominal": {
+          "ap50": 0.6038611184000838,
+          "boxes": 61,
+          "false_positive_image_rate": 0.65,
+          "images": 20,
+          "map": 0.4571875408310744,
+          "p50_ms": 61.51279150071787,
+          "p95_ms": 62.27715864733909
+        },
+        "sensor_noise": {
+          "ap50": 0.588595498574408,
+          "boxes": 61,
+          "false_positive_image_rate": 0.65,
+          "images": 20,
+          "map": 0.4332327541119296,
+          "p50_ms": 60.48781250137836,
+          "p95_ms": 62.43801875243662
+        },
+        "small_thin": {
+          "ap50": 0.4335362947116866,
+          "boxes": 176,
+          "false_positive_image_rate": 0.95,
+          "images": 20,
+          "map": 0.28436924274735165,
+          "p50_ms": 60.77787449976313,
+          "p95_ms": 67.98403094908281
+        }
+      }
+    },
+    "evidence_digest": "9ab4fa3063049effc49394398d1e27992e616d39ff82a349160570b929618186",
+    "id": 1,
+    "occurred_at": "2026-11-13T15:46:03.474564Z",
+    "passed": true,
+    "policy_digest": "bf2150ee659af1d04ce9ed2ae799482ad135403b7b5f003d20f3c6e0f42448d3",
+    "violations": []
+  },
+  "baseline_audit": [
+    {
+      "actor": "operator",
+      "artifact_digest": "0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "evaluation_id": null,
+      "from_state": null,
+      "id": 1,
+      "occurred_at": "2026-11-13T15:46:03.375871Z",
+      "reason": "Published a verified signed bundle",
+      "to_state": "published"
+    },
+    {
+      "actor": "evaluator",
+      "artifact_digest": "0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "evaluation_id": 1,
+      "from_state": "published",
+      "id": 2,
+      "occurred_at": "2026-11-13T15:46:03.474564Z",
+      "reason": "Gate passed. Evidence sha256:9ab4fa3063049effc49394398d1e27992e616d39ff82a349160570b929618186.",
+      "to_state": "evaluated"
+    },
+    {
+      "actor": "operator",
+      "artifact_digest": "0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "evaluation_id": 1,
+      "from_state": "evaluated",
+      "id": 3,
+      "occurred_at": "2026-11-13T15:46:03.485313Z",
+      "reason": "Week 4 local integration approval",
+      "to_state": "approved"
+    }
+  ],
+  "degraded": {
+    "artifact_digest": "ae8c38ed745d565f1397a209912614d9bb6997934fcae6eb7f2d3e2bf42c7a90",
+    "baseline_digest": "0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+    "evidence": {
+      "artifact_digest": "ae8c38ed745d565f1397a209912614d9bb6997934fcae6eb7f2d3e2bf42c7a90",
+      "benchmark_profile": "cpu-1thread-5warmup-v1/Darwin 24.6.0 arm64 Apple M4 Pro/ORT 1.22.1",
+      "dataset_digest": "f75b1e7ad2afd597b90530b236caee30d8192bd325634e30421513e2b127cadc",
+      "known_cases": {
+        "empty_scene-000001": {
+          "false_positives": 0,
+          "missed": 0
+        },
+        "fari_indoor-298396": {
+          "false_positives": 24,
+          "missed": 21
+        },
+        "low_light-185409": {
+          "false_positives": 19,
+          "missed": 4
+        },
+        "motion_blur-185409": {
+          "false_positives": 9,
+          "missed": 7
+        },
+        "small_thin-189820": {
+          "false_positives": 35,
+          "missed": 9
+        }
+      },
+      "overall": {
+        "ap50": 0.38348102810471146,
+        "boxes": 547,
+        "false_positive_image_rate": 0.6571428571428571,
+        "images": 140,
+        "map": 0.2668019374271845,
+        "p50_ms": 61.520082996139536,
+        "p95_ms": 64.00173335168802
+      },
+      "peak_rss_bytes": 345849856,
+      "report_sha256": "36fec865dcb8ca6f4da168c70f438a67b0ea51eb7ec59d5288330d7081816f30",
+      "schema_version": 1,
+      "slices": {
+        "empty_scene": {
+          "ap50": null,
+          "boxes": 0,
+          "false_positive_image_rate": 0.0,
+          "images": 16,
+          "map": null,
+          "p50_ms": 62.442938000458525,
+          "p95_ms": 63.88594824966276
+        },
+        "fari_indoor": {
+          "ap50": 0.4562907378287294,
+          "boxes": 127,
+          "false_positive_image_rate": 0.9583333333333334,
+          "images": 24,
+          "map": 0.3281926670026802,
+          "p50_ms": 61.38795800143271,
+          "p95_ms": 63.859643697651336
+        },
+        "low_light": {
+          "ap50": 0.48521354145479617,
+          "boxes": 61,
+          "false_positive_image_rate": 0.7,
+          "images": 20,
+          "map": 0.31857996663308114,
+          "p50_ms": 60.986416501691565,
+          "p95_ms": 62.40314230162767
+        },
+        "motion_blur": {
+          "ap50": 0.43708184499286645,
+          "boxes": 61,
+          "false_positive_image_rate": 0.6,
+          "images": 20,
+          "map": 0.3338383911800846,
+          "p50_ms": 61.75214599716128,
+          "p95_ms": 62.72152559868118
+        },
+        "nominal": {
+          "ap50": 0.6054797299617392,
+          "boxes": 61,
+          "false_positive_image_rate": 0.6,
+          "images": 20,
+          "map": 0.45907438928051514,
+          "p50_ms": 61.591416499140905,
+          "p95_ms": 64.39179405351751
+        },
+        "sensor_noise": {
+          "ap50": 0.5890328523218831,
+          "boxes": 61,
+          "false_positive_image_rate": 0.6,
+          "images": 20,
+          "map": 0.4351277913117093,
+          "p50_ms": 60.99327050105785,
+          "p95_ms": 62.79547354643
+        },
+        "small_thin": {
+          "ap50": 0.4005636226999303,
+          "boxes": 176,
+          "false_positive_image_rate": 0.95,
+          "images": 20,
+          "map": 0.27965877312960347,
+          "p50_ms": 61.681083501753164,
+          "p95_ms": 64.0359625016572
+        }
+      }
+    },
+    "evidence_digest": "696bbc30f20def0f131c5ae0082f962d048f389631372c18a38df762d24c0804",
+    "id": 2,
+    "occurred_at": "2026-11-13T15:46:03.796775Z",
+    "passed": false,
+    "policy_digest": "bf2150ee659af1d04ce9ed2ae799482ad135403b7b5f003d20f3c6e0f42448d3",
+    "violations": [
+      "low_light mAP 0.3186 below floor 0.3500",
+      "low_light mAP dropped 10.42 pp (0.4227 to 0.3186), limit 2.00 pp",
+      "Known failure small_thin-189820 has 35 false_positives, limit 34"
+    ]
+  },
+  "degraded_audit": [
+    {
+      "actor": "operator",
+      "artifact_digest": "ae8c38ed745d565f1397a209912614d9bb6997934fcae6eb7f2d3e2bf42c7a90",
+      "evaluation_id": null,
+      "from_state": null,
+      "id": 4,
+      "occurred_at": "2026-11-13T15:46:03.695082Z",
+      "reason": "Published a verified signed bundle",
+      "to_state": "published"
+    },
+    {
+      "actor": "evaluator",
+      "artifact_digest": "ae8c38ed745d565f1397a209912614d9bb6997934fcae6eb7f2d3e2bf42c7a90",
+      "evaluation_id": 2,
+      "from_state": "published",
+      "id": 5,
+      "occurred_at": "2026-11-13T15:46:03.796775Z",
+      "reason": "Gate rejected. Evidence sha256:696bbc30f20def0f131c5ae0082f962d048f389631372c18a38df762d24c0804.",
+      "to_state": "published"
+    }
+  ],
+  "failed_approval_status": 409,
+  "manual_evaluation_status": 409,
+  "robot_download_status": {
+    "baseline": 206,
+    "degraded": 403
+  }
+}

@@ -17,7 +17,7 @@ help:
 	  'make db    Open the PostgreSQL SQL console.' \
 	  'make migrate  Apply registry database migrations.' \
 	  'make down  Remove this stack; keep its named data volumes.' \
-	  'make setup Install locked Python dependencies with uv.' \
+	  'make setup Install locked Python dependencies with uv (including packaging and evaluation).' \
 	  'make check Run Python lint, format, types, and tests.' \
 	  'make terraform-check Check the no-resource Terraform scaffold.' \
 	  'make secret-scan Scan public-safe source files with gitleaks.'
@@ -41,11 +41,11 @@ migrate:
 	$(COMPOSE) exec registry alembic upgrade head
 
 setup:
-	UV_PYTHON_INSTALL_DIR="$(CURDIR)/.tools/python" UV_CACHE_DIR="$(CURDIR)/.uv-cache" $(UV) sync --frozen
+	UV_PYTHON_INSTALL_DIR="$(CURDIR)/.tools/python" UV_CACHE_DIR="$(CURDIR)/.uv-cache" $(UV) sync --frozen --group packaging
 
 lint:
-	$(RUN) ruff check agent pipeline services migrations tests scripts
-	$(RUN) black --check agent pipeline services migrations tests scripts
+	$(RUN) ruff check agent pipeline services migrations tests scripts eval
+	$(RUN) black --check agent pipeline services migrations tests scripts eval
 
 typecheck:
 	$(RUN) mypy

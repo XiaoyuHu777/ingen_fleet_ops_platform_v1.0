@@ -16,3 +16,6 @@ new_task_2026-10-26
 
 .week3/
 *.pem
+
+.week4/
+eval/golden/images/
