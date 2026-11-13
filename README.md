@@ -17,7 +17,7 @@ audited promotion gate that checks regressions before operator approval.
 | **Week 1** | Architecture, local infrastructure, and CI foundation | [Week 1 review](week-01/README.md) — deliverables, decisions, validation, and the original code snapshot |
 | **Week 2** | Fleet registry, API contract, and robot authentication | [Week 2 review](week-02/README.md) — implementation, migration, contract, tests, and weekly log |
 | **Week 3** | Model packaging and signed artifact registry | [Week 3 review](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/blob/b2872811f8211abcff4d953f1859c85ecee24b01/week-03/README.md) · [PR #2](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/pull/2) |
-| **Week 4** | Evaluation gate and failure-case regression suite | Local validation approved the baseline and rejected the degraded candidate. 88 tests passed with 89.11% branch-aware Registry coverage. Code is pending publication. |
+| **Week 4** | Evaluation gate and failure-case regression suite | Local validation approved the baseline and rejected the degraded candidate. 88 tests passed with 89.11% branch-aware Registry coverage. [Week 4 review](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/blob/week-04-evaluation-gate/week-04/README.md) · [PR #3](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/pull/3). |
 | Week 5 onward | Future work | Review entries will be added as work is completed. |
 
 Each review page links to that week's evidence. Source code remains in the
