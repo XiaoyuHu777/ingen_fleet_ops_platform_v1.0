@@ -2,7 +2,7 @@
 
 from collections.abc import Iterator
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 from uuid import uuid4
 
 import pytest
@@ -27,6 +27,7 @@ from agent.artifacts import (
     read_archive,
     sha256,
 )
+from agent.evaluation import CaseErrors, Evaluation, SliceMetrics, read_policy
 from agent.verify import BUNDLE_MEMBERS, load_trust, verify_bundle
 from pipeline.sign import generate_key, sign_package
 from services.registry.app import create_app
@@ -35,6 +36,8 @@ from services.registry.config import Settings
 from services.registry.models import Base
 
 OPERATOR = {"Authorization": "Bearer artifact-test-operator"}
+EVALUATOR = {"Authorization": "Bearer artifact-test-evaluator"}
+POLICY = Path("policy/gate.yaml")
 UPLOAD = {**OPERATOR, "Content-Type": MEDIA_TYPE}
 
 
@@ -155,6 +158,8 @@ def artifact_client(keys: Path) -> Iterator[tuple[TestClient, MemoryStore]]:
         minio_root_password=SecretStr("test"),
         operator_api_key=SecretStr("artifact-test-operator"),
         artifact_trust_dir=keys / "public",
+        evaluator_api_key=SecretStr("artifact-test-evaluator"),
+        gate_policy_path=POLICY,
     )
     store = MemoryStore()
     app = create_app(settings, artifact_store=store)
@@ -313,6 +318,43 @@ def test_invalid_range(
     assert result.headers["Content-Range"] == f"bytes */{len(body)}"
 
 
+def passing_evaluation(digest: str) -> Evaluation:
+    policy, _ = read_policy(POLICY)
+    slices = {
+        name: SliceMetrics(
+            images=rule.images,
+            boxes=0 if name == "empty_scene" else 10,
+            map=None if name == "empty_scene" else 0.8,
+            ap50=None if name == "empty_scene" else 0.9,
+            false_positive_image_rate=0.0,
+            p50_ms=1.0,
+            p95_ms=2.0,
+        )
+        for name, rule in policy.slices.items()
+    }
+    return Evaluation(
+        schema_version=1,
+        artifact_digest=digest,
+        dataset_digest=policy.dataset_digest,
+        report_sha256="b" * 64,
+        benchmark_profile="test CPU",
+        peak_rss_bytes=4096,
+        slices=slices,
+        overall=SliceMetrics(
+            images=sum(s.images for s in slices.values()),
+            boxes=sum(s.boxes for s in slices.values()),
+            map=0.8,
+            ap50=0.9,
+            false_positive_image_rate=0.0,
+            p50_ms=1.0,
+            p95_ms=2.0,
+        ),
+        known_cases={
+            name: CaseErrors(missed=0, false_positives=0) for name in policy.known_cases
+        },
+    )
+
+
 def test_range_download_and_lifecycle(
     tmp_path: Path, keys: Path, artifact_client: tuple[TestClient, MemoryStore]
 ) -> None:
@@ -349,7 +391,26 @@ def test_range_download_and_lifecycle(
         return int(result.status_code)
 
     assert transition("published", "approved") == 409
-    assert transition("published", "evaluated") == 200
+    assert transition("published", "evaluated") == 409
+    evidence = passing_evaluation(digest).model_dump(mode="json")
+    assert (
+        client.post(url + "/evaluations", headers=OPERATOR, json=evidence).status_code
+        == 401
+    )
+    assert (
+        client.post(url + "/evaluations", headers=robot, json=evidence).status_code
+        == 401
+    )
+    accepted = client.post(url + "/evaluations", headers=EVALUATOR, json=evidence)
+    assert accepted.status_code == 201 and accepted.json()["passed"]
+    replay = client.post(url + "/evaluations", headers=EVALUATOR, json=evidence)
+    assert replay.status_code == 200 and replay.json() == accepted.json()
+    assert (
+        client.get(
+            url + f"/evaluations/{accepted.json()['id']}", headers=OPERATOR
+        ).json()
+        == accepted.json()
+    )
     assert transition("published", "evaluated") == 409
     assert transition("evaluated", "approved") == 200
     first = client.get(url + "/download", headers={**robot, "Range": "bytes=0-399"})
@@ -393,9 +454,18 @@ def test_range_download_and_lifecycle(
         "deprecated",
         "revoked",
     ]
-    assert all(
-        event["actor"] == "operator" and event["occurred_at"].endswith("Z")
-        for event in events
+    assert [event["actor"] for event in events] == [
+        "operator",
+        "evaluator",
+        "operator",
+        "operator",
+        "operator",
+    ]
+    assert all(event["occurred_at"].endswith("Z") for event in events)
+    assert (
+        events[1]["evaluation_id"]
+        == events[2]["evaluation_id"]
+        == accepted.json()["id"]
     )
 
     document = client.get("/openapi.json").json()
@@ -431,3 +501,80 @@ def test_range_download_and_lifecycle(
                 {**schema, "components": document["components"]},
                 format_checker=FormatChecker(),
             ).validate(body_sample)
+
+
+def test_promotion_rechecks_approved_baseline(
+    tmp_path: Path, keys: Path, artifact_client: tuple[TestClient, MemoryStore]
+) -> None:
+    client, _ = artifact_client
+
+    def publish(version: str) -> tuple[str, str]:
+        data, digest = make_signed(tmp_path, keys, version=version)
+        assert (
+            client.post("/v1/artifacts", headers=UPLOAD, content=data).status_code
+            == 201
+        )
+        return digest, f"/v1/artifacts/{digest}"
+
+    def submit(resource: str, evidence: Evaluation) -> dict[str, Any]:
+        response = client.post(
+            resource + "/evaluations",
+            headers=EVALUATOR,
+            json=evidence.model_dump(mode="json"),
+        )
+        assert response.status_code == 201
+        return cast(dict[str, Any], response.json())
+
+    def approve(resource: str) -> int:
+        result = client.patch(
+            resource + "/lifecycle",
+            headers=OPERATOR,
+            json={
+                "expected_state": "evaluated",
+                "state": "approved",
+                "reason": "Reviewed",
+            },
+        )
+        return int(result.status_code)
+
+    first, first_url = publish("2.0.0")
+    second, second_url = publish("2.0.1")
+    earlier = passing_evaluation(second)
+    earlier.slices["low_light"].map = 0.77
+    assert submit(second_url, earlier)["passed"]
+    assert submit(first_url, passing_evaluation(first))["passed"]
+    assert approve(first_url) == 200
+    assert approve(second_url) == 409
+
+    third, third_url = publish("2.0.2")
+    evidence = passing_evaluation(third)
+    evidence.slices["low_light"].map = 0.77
+    rejected = submit(third_url, evidence)
+    assert rejected["baseline_digest"] == first
+    assert not rejected["passed"]
+    assert "low_light mAP dropped 3.00 pp" in rejected["violations"][0]
+    assert approve(third_url) == 409
+    events = client.get(third_url + "/audit", headers=OPERATOR).json()["items"]
+    assert [(r["from_state"], r["to_state"]) for r in events] == [
+        (None, "published"),
+        ("published", "published"),
+    ]
+    assert events[-1]["evaluation_id"] == rejected["id"]
+
+
+def test_known_case_failure_blocks_a_candidate_with_unchanged_slice_scores(
+    tmp_path: Path, keys: Path, artifact_client: tuple[TestClient, MemoryStore]
+) -> None:
+    client, _ = artifact_client
+    bundle, digest = make_signed(tmp_path, keys)
+    assert (
+        client.post("/v1/artifacts", headers=UPLOAD, content=bundle).status_code == 201
+    )
+    report = passing_evaluation(digest)
+    report.known_cases["empty_scene-000001"].false_positives = 1
+    url = f"/v1/artifacts/{digest}/evaluations"
+    response = client.post(url, headers=EVALUATOR, json=report.model_dump(mode="json"))
+    assert response.status_code == 201
+    assert response.json()["violations"] == [
+        "Known failure empty_scene-000001 has 1 false_positives, limit 0"
+    ]

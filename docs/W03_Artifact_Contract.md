@@ -123,9 +123,10 @@ request, including retries and resumed downloads.
 
 The normal progression is `published → evaluated → approved → deprecated →
 revoked`. An operator can revoke directly from any earlier state. Revocation is
-terminal. Week 3 exposes manual lifecycle transitions. Week 4 supplies the
-evaluation gate and approval policy. Audit rows and state changes commit in
-one transaction. The database rejects edits and deletes of audit events
+terminal. Week 3 exposes manual lifecycle transitions. The
+[Week 4 gate contract](W04_Gate_Contract.md) describes the evidence and approval
+workflow that supersedes manual promotion. Audit rows and state changes
+commit in one transaction. The database rejects edits and deletes of audit events
 (and truncation on PostgreSQL). The shared prototype operator credential
 identifies the actor as `operator`.
 

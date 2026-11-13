@@ -1,0 +1,928 @@
+{
+  "artifact_digest": "0c6f0fc1ec8159e9f4b0107ed0daef0ac3cfd6ef9585e214c5b808fd11dc7510",
+  "benchmark_profile": "cpu-1thread-5warmup-v1/Darwin 24.6.0 arm64 Apple M4 Pro/ORT 1.22.1",
+  "dataset_digest": "f75b1e7ad2afd597b90530b236caee30d8192bd325634e30421513e2b127cadc",
+  "dataset_label_version": "coco2017-val-ingen-w04.2",
+  "image_errors": {
+    "empty_scene-000001": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "empty_scene-000002": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "empty_scene-000003": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "empty_scene-000004": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "empty_scene-000005": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "empty_scene-000006": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "empty_scene-000007": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "empty_scene-000008": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "empty_scene-000009": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "empty_scene-000010": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "empty_scene-000011": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "empty_scene-000012": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "empty_scene-000013": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "empty_scene-000014": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "empty_scene-000015": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "empty_scene-000016": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "fari_indoor-039956": {
+      "false_positives": 10,
+      "missed": 1
+    },
+    "fari_indoor-042889": {
+      "false_positives": 4,
+      "missed": 0
+    },
+    "fari_indoor-062554": {
+      "false_positives": 10,
+      "missed": 2
+    },
+    "fari_indoor-099053": {
+      "false_positives": 22,
+      "missed": 4
+    },
+    "fari_indoor-116479": {
+      "false_positives": 2,
+      "missed": 2
+    },
+    "fari_indoor-127494": {
+      "false_positives": 12,
+      "missed": 1
+    },
+    "fari_indoor-129113": {
+      "false_positives": 4,
+      "missed": 2
+    },
+    "fari_indoor-132116": {
+      "false_positives": 11,
+      "missed": 1
+    },
+    "fari_indoor-143998": {
+      "false_positives": 11,
+      "missed": 3
+    },
+    "fari_indoor-153632": {
+      "false_positives": 4,
+      "missed": 1
+    },
+    "fari_indoor-191761": {
+      "false_positives": 1,
+      "missed": 3
+    },
+    "fari_indoor-223789": {
+      "false_positives": 6,
+      "missed": 2
+    },
+    "fari_indoor-250766": {
+      "false_positives": 7,
+      "missed": 3
+    },
+    "fari_indoor-298396": {
+      "false_positives": 24,
+      "missed": 21
+    },
+    "fari_indoor-329080": {
+      "false_positives": 2,
+      "missed": 2
+    },
+    "fari_indoor-343076": {
+      "false_positives": 3,
+      "missed": 1
+    },
+    "fari_indoor-409630": {
+      "false_positives": 3,
+      "missed": 1
+    },
+    "fari_indoor-426253": {
+      "false_positives": 3,
+      "missed": 0
+    },
+    "fari_indoor-446522": {
+      "false_positives": 1,
+      "missed": 2
+    },
+    "fari_indoor-447522": {
+      "false_positives": 32,
+      "missed": 4
+    },
+    "fari_indoor-453040": {
+      "false_positives": 2,
+      "missed": 2
+    },
+    "fari_indoor-530624": {
+      "false_positives": 1,
+      "missed": 0
+    },
+    "fari_indoor-549167": {
+      "false_positives": 0,
+      "missed": 6
+    },
+    "fari_indoor-555009": {
+      "false_positives": 5,
+      "missed": 0
+    },
+    "low_light-012062": {
+      "false_positives": 3,
+      "missed": 4
+    },
+    "low_light-022589": {
+      "false_positives": 3,
+      "missed": 1
+    },
+    "low_light-069106": {
+      "false_positives": 0,
+      "missed": 1
+    },
+    "low_light-091921": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "low_light-110972": {
+      "false_positives": 0,
+      "missed": 1
+    },
+    "low_light-118209": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "low_light-152465": {
+      "false_positives": 0,
+      "missed": 1
+    },
+    "low_light-166642": {
+      "false_positives": 2,
+      "missed": 0
+    },
+    "low_light-172977": {
+      "false_positives": 1,
+      "missed": 0
+    },
+    "low_light-185409": {
+      "false_positives": 19,
+      "missed": 4
+    },
+    "low_light-196759": {
+      "false_positives": 5,
+      "missed": 1
+    },
+    "low_light-215245": {
+      "false_positives": 6,
+      "missed": 5
+    },
+    "low_light-218424": {
+      "false_positives": 3,
+      "missed": 1
+    },
+    "low_light-272364": {
+      "false_positives": 2,
+      "missed": 2
+    },
+    "low_light-288882": {
+      "false_positives": 2,
+      "missed": 0
+    },
+    "low_light-345261": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "low_light-377575": {
+      "false_positives": 1,
+      "missed": 2
+    },
+    "low_light-402519": {
+      "false_positives": 1,
+      "missed": 0
+    },
+    "low_light-418281": {
+      "false_positives": 1,
+      "missed": 0
+    },
+    "low_light-550084": {
+      "false_positives": 2,
+      "missed": 3
+    },
+    "motion_blur-012062": {
+      "false_positives": 1,
+      "missed": 4
+    },
+    "motion_blur-022589": {
+      "false_positives": 2,
+      "missed": 1
+    },
+    "motion_blur-069106": {
+      "false_positives": 3,
+      "missed": 2
+    },
+    "motion_blur-091921": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "motion_blur-110972": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "motion_blur-118209": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "motion_blur-152465": {
+      "false_positives": 0,
+      "missed": 1
+    },
+    "motion_blur-166642": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "motion_blur-172977": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "motion_blur-185409": {
+      "false_positives": 9,
+      "missed": 7
+    },
+    "motion_blur-196759": {
+      "false_positives": 2,
+      "missed": 1
+    },
+    "motion_blur-215245": {
+      "false_positives": 11,
+      "missed": 4
+    },
+    "motion_blur-218424": {
+      "false_positives": 5,
+      "missed": 1
+    },
+    "motion_blur-272364": {
+      "false_positives": 0,
+      "missed": 4
+    },
+    "motion_blur-288882": {
+      "false_positives": 1,
+      "missed": 2
+    },
+    "motion_blur-345261": {
+      "false_positives": 0,
+      "missed": 1
+    },
+    "motion_blur-377575": {
+      "false_positives": 1,
+      "missed": 2
+    },
+    "motion_blur-402519": {
+      "false_positives": 3,
+      "missed": 0
+    },
+    "motion_blur-418281": {
+      "false_positives": 1,
+      "missed": 1
+    },
+    "motion_blur-550084": {
+      "false_positives": 1,
+      "missed": 3
+    },
+    "nominal-012062": {
+      "false_positives": 4,
+      "missed": 2
+    },
+    "nominal-022589": {
+      "false_positives": 3,
+      "missed": 0
+    },
+    "nominal-069106": {
+      "false_positives": 0,
+      "missed": 1
+    },
+    "nominal-091921": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "nominal-110972": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "nominal-118209": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "nominal-152465": {
+      "false_positives": 0,
+      "missed": 1
+    },
+    "nominal-166642": {
+      "false_positives": 3,
+      "missed": 0
+    },
+    "nominal-172977": {
+      "false_positives": 1,
+      "missed": 0
+    },
+    "nominal-185409": {
+      "false_positives": 17,
+      "missed": 2
+    },
+    "nominal-196759": {
+      "false_positives": 9,
+      "missed": 1
+    },
+    "nominal-215245": {
+      "false_positives": 8,
+      "missed": 2
+    },
+    "nominal-218424": {
+      "false_positives": 4,
+      "missed": 1
+    },
+    "nominal-272364": {
+      "false_positives": 5,
+      "missed": 1
+    },
+    "nominal-288882": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "nominal-345261": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "nominal-377575": {
+      "false_positives": 1,
+      "missed": 2
+    },
+    "nominal-402519": {
+      "false_positives": 1,
+      "missed": 0
+    },
+    "nominal-418281": {
+      "false_positives": 1,
+      "missed": 0
+    },
+    "nominal-550084": {
+      "false_positives": 0,
+      "missed": 3
+    },
+    "sensor_noise-012062": {
+      "false_positives": 4,
+      "missed": 3
+    },
+    "sensor_noise-022589": {
+      "false_positives": 6,
+      "missed": 0
+    },
+    "sensor_noise-069106": {
+      "false_positives": 1,
+      "missed": 0
+    },
+    "sensor_noise-091921": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "sensor_noise-110972": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "sensor_noise-118209": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "sensor_noise-152465": {
+      "false_positives": 0,
+      "missed": 1
+    },
+    "sensor_noise-166642": {
+      "false_positives": 2,
+      "missed": 0
+    },
+    "sensor_noise-172977": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "sensor_noise-185409": {
+      "false_positives": 14,
+      "missed": 2
+    },
+    "sensor_noise-196759": {
+      "false_positives": 6,
+      "missed": 1
+    },
+    "sensor_noise-215245": {
+      "false_positives": 9,
+      "missed": 2
+    },
+    "sensor_noise-218424": {
+      "false_positives": 3,
+      "missed": 1
+    },
+    "sensor_noise-272364": {
+      "false_positives": 5,
+      "missed": 1
+    },
+    "sensor_noise-288882": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "sensor_noise-345261": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "sensor_noise-377575": {
+      "false_positives": 0,
+      "missed": 2
+    },
+    "sensor_noise-402519": {
+      "false_positives": 2,
+      "missed": 0
+    },
+    "sensor_noise-418281": {
+      "false_positives": 1,
+      "missed": 0
+    },
+    "sensor_noise-550084": {
+      "false_positives": 1,
+      "missed": 3
+    },
+    "small_thin-001993": {
+      "false_positives": 6,
+      "missed": 1
+    },
+    "small_thin-008762": {
+      "false_positives": 33,
+      "missed": 4
+    },
+    "small_thin-034873": {
+      "false_positives": 13,
+      "missed": 7
+    },
+    "small_thin-121506": {
+      "false_positives": 5,
+      "missed": 7
+    },
+    "small_thin-124659": {
+      "false_positives": 22,
+      "missed": 15
+    },
+    "small_thin-132329": {
+      "false_positives": 4,
+      "missed": 0
+    },
+    "small_thin-148620": {
+      "false_positives": 1,
+      "missed": 0
+    },
+    "small_thin-189820": {
+      "false_positives": 35,
+      "missed": 9
+    },
+    "small_thin-244411": {
+      "false_positives": 2,
+      "missed": 8
+    },
+    "small_thin-269682": {
+      "false_positives": 17,
+      "missed": 3
+    },
+    "small_thin-271728": {
+      "false_positives": 7,
+      "missed": 2
+    },
+    "small_thin-292005": {
+      "false_positives": 5,
+      "missed": 2
+    },
+    "small_thin-293390": {
+      "false_positives": 0,
+      "missed": 4
+    },
+    "small_thin-343466": {
+      "false_positives": 3,
+      "missed": 0
+    },
+    "small_thin-377882": {
+      "false_positives": 4,
+      "missed": 13
+    },
+    "small_thin-458410": {
+      "false_positives": 9,
+      "missed": 14
+    },
+    "small_thin-500464": {
+      "false_positives": 6,
+      "missed": 4
+    },
+    "small_thin-513181": {
+      "false_positives": 4,
+      "missed": 12
+    },
+    "small_thin-533206": {
+      "false_positives": 9,
+      "missed": 2
+    },
+    "small_thin-577976": {
+      "false_positives": 21,
+      "missed": 1
+    }
+  },
+  "known_cases": {
+    "empty_scene-000001": {
+      "false_positives": 0,
+      "missed": 0
+    },
+    "fari_indoor-298396": {
+      "false_positives": 24,
+      "missed": 21
+    },
+    "low_light-185409": {
+      "false_positives": 19,
+      "missed": 4
+    },
+    "motion_blur-185409": {
+      "false_positives": 9,
+      "missed": 7
+    },
+    "small_thin-189820": {
+      "false_positives": 35,
+      "missed": 9
+    }
+  },
+  "overall": {
+    "ap50": 0.38348102810471146,
+    "boxes": 547,
+    "false_positive_image_rate": 0.6571428571428571,
+    "images": 140,
+    "map": 0.2668019374271845,
+    "p50_ms": 61.4751034991059,
+    "p95_ms": 63.51352740130096
+  },
+  "peak_rss_bytes": 335872000,
+  "policy_digest": "bf2150ee659af1d04ce9ed2ae799482ad135403b7b5f003d20f3c6e0f42448d3",
+  "slices": {
+    "empty_scene": {
+      "ap50": null,
+      "boxes": 0,
+      "false_positive_image_rate": 0.0,
+      "images": 16,
+      "map": null,
+      "p50_ms": 60.335520498483675,
+      "p95_ms": 61.88664624824014
+    },
+    "fari_indoor": {
+      "ap50": 0.4562907378287294,
+      "boxes": 127,
+      "false_positive_image_rate": 0.9583333333333334,
+      "images": 24,
+      "map": 0.3281926670026802,
+      "p50_ms": 61.28612500106101,
+      "p95_ms": 64.90004640181724
+    },
+    "low_light": {
+      "ap50": 0.48521354145479617,
+      "boxes": 61,
+      "false_positive_image_rate": 0.7,
+      "images": 20,
+      "map": 0.31857996663308114,
+      "p50_ms": 61.953478998475475,
+      "p95_ms": 63.07241460563091
+    },
+    "motion_blur": {
+      "ap50": 0.43708184499286645,
+      "boxes": 61,
+      "false_positive_image_rate": 0.6,
+      "images": 20,
+      "map": 0.3338383911800846,
+      "p50_ms": 60.81435400119517,
+      "p95_ms": 61.96075594962167
+    },
+    "nominal": {
+      "ap50": 0.6054797299617392,
+      "boxes": 61,
+      "false_positive_image_rate": 0.6,
+      "images": 20,
+      "map": 0.45907438928051514,
+      "p50_ms": 61.20191700028954,
+      "p95_ms": 64.4654044535855
+    },
+    "sensor_noise": {
+      "ap50": 0.5890328523218831,
+      "boxes": 61,
+      "false_positive_image_rate": 0.6,
+      "images": 20,
+      "map": 0.4351277913117093,
+      "p50_ms": 62.22052099838038,
+      "p95_ms": 63.34708270151168
+    },
+    "small_thin": {
+      "ap50": 0.4005636226999303,
+      "boxes": 176,
+      "false_positive_image_rate": 0.95,
+      "images": 20,
+      "map": 0.27965877312960347,
+      "p50_ms": 62.20127100095851,
+      "p95_ms": 63.560120801776065
+    }
+  },
+  "worst_cases": [
+    {
+      "false_positives": 17,
+      "image": "nominal-185409",
+      "missed": 2,
+      "overlay": "overlays/nominal-185409.jpg",
+      "sha256": "8580b5b185ddf60397294e41f20d681873d35081b95eef6413fe1e13f24fc84a",
+      "slice": "nominal",
+      "source": {
+        "creator": "Colin J. McMechan",
+        "file_name": "000000185409.jpg",
+        "flickr_image": "https://farm6.staticflickr.com/5454/8881324394_97e0322747_z.jpg",
+        "flickr_page": "https://www.flickr.com/photos/quakeup/8881324394/",
+        "image_id": 185409,
+        "license": "CC-BY-2.0",
+        "license_url": "https://creativecommons.org/licenses/by/2.0/",
+        "sha256": "9675e520965a741d41778599430395ad68c2446d597e80235961e042730639f8",
+        "title": "Tanzania-Serengeti-MbuziMaweSafariDrive-6"
+      },
+      "transform": "original"
+    },
+    {
+      "false_positives": 8,
+      "image": "nominal-215245",
+      "missed": 2,
+      "overlay": "overlays/nominal-215245.jpg",
+      "sha256": "2862fb575763f0f75c18eefaa8b8f94eb8382714a657f76421f99d998aa59bdc",
+      "slice": "nominal",
+      "source": {
+        "creator": "David Berkowitz",
+        "file_name": "000000215245.jpg",
+        "flickr_image": "https://farm6.staticflickr.com/5187/5699107573_2059b4c0e1_z.jpg",
+        "flickr_page": "https://www.flickr.com/photos/davidberkowitz/5699107573/",
+        "image_id": 215245,
+        "license": "CC-BY-2.0",
+        "license_url": "https://creativecommons.org/licenses/by/2.0/",
+        "sha256": "8f26d81db7cb960105b0dbfdd5e2846a4aace8d2fb352b0698f00afb3fe6ebb4",
+        "title": "Zebra - Serengeti National Park safari - Tanzania, Africa"
+      },
+      "transform": "original"
+    },
+    {
+      "false_positives": 19,
+      "image": "low_light-185409",
+      "missed": 4,
+      "overlay": "overlays/low_light-185409.jpg",
+      "sha256": "6d56fbc28532d8196db35facfbe9246e85800baabcf48c4ccff2888f4bb887ea",
+      "slice": "low_light",
+      "source": {
+        "creator": "Colin J. McMechan",
+        "file_name": "000000185409.jpg",
+        "flickr_image": "https://farm6.staticflickr.com/5454/8881324394_97e0322747_z.jpg",
+        "flickr_page": "https://www.flickr.com/photos/quakeup/8881324394/",
+        "image_id": 185409,
+        "license": "CC-BY-2.0",
+        "license_url": "https://creativecommons.org/licenses/by/2.0/",
+        "sha256": "9675e520965a741d41778599430395ad68c2446d597e80235961e042730639f8",
+        "title": "Tanzania-Serengeti-MbuziMaweSafariDrive-6"
+      },
+      "transform": "low_light"
+    },
+    {
+      "false_positives": 6,
+      "image": "low_light-215245",
+      "missed": 5,
+      "overlay": "overlays/low_light-215245.jpg",
+      "sha256": "6f71f110da0e86b6d99e2be2be53490bf2a9a836facffcb52b4482480adc89a2",
+      "slice": "low_light",
+      "source": {
+        "creator": "David Berkowitz",
+        "file_name": "000000215245.jpg",
+        "flickr_image": "https://farm6.staticflickr.com/5187/5699107573_2059b4c0e1_z.jpg",
+        "flickr_page": "https://www.flickr.com/photos/davidberkowitz/5699107573/",
+        "image_id": 215245,
+        "license": "CC-BY-2.0",
+        "license_url": "https://creativecommons.org/licenses/by/2.0/",
+        "sha256": "8f26d81db7cb960105b0dbfdd5e2846a4aace8d2fb352b0698f00afb3fe6ebb4",
+        "title": "Zebra - Serengeti National Park safari - Tanzania, Africa"
+      },
+      "transform": "low_light"
+    },
+    {
+      "false_positives": 9,
+      "image": "motion_blur-185409",
+      "missed": 7,
+      "overlay": "overlays/motion_blur-185409.jpg",
+      "sha256": "79b08f8b4bdea84837f64a2f563103299ee6cdd00217cfb50d0340756a6720c8",
+      "slice": "motion_blur",
+      "source": {
+        "creator": "Colin J. McMechan",
+        "file_name": "000000185409.jpg",
+        "flickr_image": "https://farm6.staticflickr.com/5454/8881324394_97e0322747_z.jpg",
+        "flickr_page": "https://www.flickr.com/photos/quakeup/8881324394/",
+        "image_id": 185409,
+        "license": "CC-BY-2.0",
+        "license_url": "https://creativecommons.org/licenses/by/2.0/",
+        "sha256": "9675e520965a741d41778599430395ad68c2446d597e80235961e042730639f8",
+        "title": "Tanzania-Serengeti-MbuziMaweSafariDrive-6"
+      },
+      "transform": "motion_blur"
+    },
+    {
+      "false_positives": 11,
+      "image": "motion_blur-215245",
+      "missed": 4,
+      "overlay": "overlays/motion_blur-215245.jpg",
+      "sha256": "587cec69b8fbfc699d56682ed58204b050a8775bb11463e4fa6f70f36d30df2b",
+      "slice": "motion_blur",
+      "source": {
+        "creator": "David Berkowitz",
+        "file_name": "000000215245.jpg",
+        "flickr_image": "https://farm6.staticflickr.com/5187/5699107573_2059b4c0e1_z.jpg",
+        "flickr_page": "https://www.flickr.com/photos/davidberkowitz/5699107573/",
+        "image_id": 215245,
+        "license": "CC-BY-2.0",
+        "license_url": "https://creativecommons.org/licenses/by/2.0/",
+        "sha256": "8f26d81db7cb960105b0dbfdd5e2846a4aace8d2fb352b0698f00afb3fe6ebb4",
+        "title": "Zebra - Serengeti National Park safari - Tanzania, Africa"
+      },
+      "transform": "motion_blur"
+    },
+    {
+      "false_positives": 14,
+      "image": "sensor_noise-185409",
+      "missed": 2,
+      "overlay": "overlays/sensor_noise-185409.jpg",
+      "sha256": "312411c9ff440658f3d6e2afcb79d5412b7892c3b07dcb6005093ea75d40ece5",
+      "slice": "sensor_noise",
+      "source": {
+        "creator": "Colin J. McMechan",
+        "file_name": "000000185409.jpg",
+        "flickr_image": "https://farm6.staticflickr.com/5454/8881324394_97e0322747_z.jpg",
+        "flickr_page": "https://www.flickr.com/photos/quakeup/8881324394/",
+        "image_id": 185409,
+        "license": "CC-BY-2.0",
+        "license_url": "https://creativecommons.org/licenses/by/2.0/",
+        "sha256": "9675e520965a741d41778599430395ad68c2446d597e80235961e042730639f8",
+        "title": "Tanzania-Serengeti-MbuziMaweSafariDrive-6"
+      },
+      "transform": "sensor_noise"
+    },
+    {
+      "false_positives": 9,
+      "image": "sensor_noise-215245",
+      "missed": 2,
+      "overlay": "overlays/sensor_noise-215245.jpg",
+      "sha256": "ce5e4d8f36227ad36754815555cd7a9c2dbbc69028439976806cf6f8eda04312",
+      "slice": "sensor_noise",
+      "source": {
+        "creator": "David Berkowitz",
+        "file_name": "000000215245.jpg",
+        "flickr_image": "https://farm6.staticflickr.com/5187/5699107573_2059b4c0e1_z.jpg",
+        "flickr_page": "https://www.flickr.com/photos/davidberkowitz/5699107573/",
+        "image_id": 215245,
+        "license": "CC-BY-2.0",
+        "license_url": "https://creativecommons.org/licenses/by/2.0/",
+        "sha256": "8f26d81db7cb960105b0dbfdd5e2846a4aace8d2fb352b0698f00afb3fe6ebb4",
+        "title": "Zebra - Serengeti National Park safari - Tanzania, Africa"
+      },
+      "transform": "sensor_noise"
+    },
+    {
+      "false_positives": 35,
+      "image": "small_thin-189820",
+      "missed": 9,
+      "overlay": "overlays/small_thin-189820.jpg",
+      "sha256": "5d221c20d70129f13e9aedab82b03628cde0a20168c13879f3192a8320b3a70a",
+      "slice": "small_thin",
+      "source": {
+        "creator": "Paul Furness",
+        "file_name": "000000189820.jpg",
+        "flickr_image": "https://farm1.staticflickr.com/23/32908206_2fa869b5bf_z.jpg",
+        "flickr_page": "https://www.flickr.com/photos/bungle/32908206/",
+        "image_id": 189820,
+        "license": "CC-BY-SA-2.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/2.0/",
+        "sha256": "194f0aca3fbaed6f998e1f87d90ee64f8590bf29d39fdc4c250b79015731faab",
+        "title": "A Systems Manager's Empire"
+      },
+      "transform": "original"
+    },
+    {
+      "false_positives": 22,
+      "image": "small_thin-124659",
+      "missed": 15,
+      "overlay": "overlays/small_thin-124659.jpg",
+      "sha256": "fdbeb2d48ce2aa304a467d6ead336c4a76069e369f81c8659cedd63a09c5ad47",
+      "slice": "small_thin",
+      "source": {
+        "creator": "Cherry Ride",
+        "file_name": "000000124659.jpg",
+        "flickr_image": "https://farm6.staticflickr.com/5030/5653997626_b4a62d69d1_z.jpg",
+        "flickr_page": "https://www.flickr.com/photos/cherryride/5653997626/",
+        "image_id": 124659,
+        "license": "CC-BY-2.0",
+        "license_url": "https://creativecommons.org/licenses/by/2.0/",
+        "sha256": "b22d1dcef9e38af51c21a13438095e72102f2ce72f7c6f3a581b39b84fe9454f",
+        "title": "View of the \"Living Room\" from the Kitchen."
+      },
+      "transform": "original"
+    },
+    {
+      "false_positives": 0,
+      "image": "empty_scene-000001",
+      "missed": 0,
+      "overlay": "overlays/empty_scene-000001.jpg",
+      "sha256": "8c479736e5c3b4ac02d40cf38c54c84225ec22de8e06842c3fe3c20a4afceae1",
+      "slice": "empty_scene",
+      "source": null,
+      "transform": "empty_scene"
+    },
+    {
+      "false_positives": 0,
+      "image": "empty_scene-000002",
+      "missed": 0,
+      "overlay": "overlays/empty_scene-000002.jpg",
+      "sha256": "de0c5711605254dbd3d744dfe6f6a9c5d3ab0662856ecc2dc847c958d745a23d",
+      "slice": "empty_scene",
+      "source": null,
+      "transform": "empty_scene"
+    },
+    {
+      "false_positives": 24,
+      "image": "fari_indoor-298396",
+      "missed": 21,
+      "overlay": "overlays/fari_indoor-298396.jpg",
+      "sha256": "def573c73f977dbb0b4b545535b7ecfc47a7de2d474bc71bd2f17b9c912fa846",
+      "slice": "fari_indoor",
+      "source": {
+        "creator": "Zach Copley",
+        "file_name": "000000298396.jpg",
+        "flickr_image": "https://farm7.staticflickr.com/6052/6348486215_b05f6c9f3c_z.jpg",
+        "flickr_page": "https://www.flickr.com/photos/zcopley/6348486215/",
+        "image_id": 298396,
+        "license": "CC-BY-SA-2.0",
+        "license_url": "https://creativecommons.org/licenses/by-sa/2.0/",
+        "sha256": "71bc39fad606fb0e3dc6072cedbd7c2dc1f79ae6e5964626d27dbee0a62df511",
+        "title": "Julia Child's Kitchen - National Museum of American History"
+      },
+      "transform": "original"
+    },
+    {
+      "false_positives": 32,
+      "image": "fari_indoor-447522",
+      "missed": 4,
+      "overlay": "overlays/fari_indoor-447522.jpg",
+      "sha256": "83ca649fdf71d3adeb2f5dca87ca1c40031972ef8eeb19f310e3b644aedbade7",
+      "slice": "fari_indoor",
+      "source": {
+        "creator": "ocbgraue",
+        "file_name": "000000447522.jpg",
+        "flickr_image": "https://farm8.staticflickr.com/7005/6847896207_43400568d5_z.jpg",
+        "flickr_page": "https://www.flickr.com/photos/graue/6847896207/",
+        "image_id": 447522,
+        "license": "CC-BY-2.0",
+        "license_url": "https://creativecommons.org/licenses/by/2.0/",
+        "sha256": "a2fd5c746e964d161f95b260799ebe7a723b319e22072b32fce8d47029f1a977",
+        "title": "Broccoli, onion, tomato, rice 2/5"
+      },
+      "transform": "original"
+    }
+  ]
+}

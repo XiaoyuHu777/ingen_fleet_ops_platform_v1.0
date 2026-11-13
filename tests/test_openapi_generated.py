@@ -21,6 +21,7 @@ from services.registry.config import Settings
 from services.registry.models import Base
 
 OPERATOR = {"Authorization": "Bearer test-operator"}
+EVALUATOR = {"Authorization": "Bearer test-evaluator"}
 ROBOT = {"platform": "Rover", "site": "test", "hardware_profile": {}}
 
 
@@ -33,6 +34,7 @@ def settings() -> Settings:
         minio_root_user="test",
         minio_root_password=SecretStr("test"),
         operator_api_key=SecretStr("test-operator"),
+        evaluator_api_key=SecretStr("test-evaluator"),
     )
 
 
@@ -61,6 +63,8 @@ def sample(schema: dict[str, Any]) -> Any:
         alternatives = schema["anyOf"]
         null = next((item for item in alternatives if item.get("type") == "null"), None)
         return None if null is not None else sample(alternatives[0])
+    if "const" in schema:
+        return schema["const"]
     if "enum" in schema:
         return schema["enum"][0]
     kind = schema.get("type")
@@ -70,11 +74,15 @@ def sample(schema: dict[str, Any]) -> Any:
     if kind == "string":
         if schema.get("format") == "date-time":
             return "2026-11-01T00:00:00Z"
+        if schema.get("pattern") == r"^[0-9a-f]{64}$":
+            return "a" * 64
         if schema.get("pattern"):
             raise ValueError(f"No generated sample for pattern {schema['pattern']}")
         return "x" * max(1, schema.get("minLength", 1))
     if kind == "integer":
         return max(1, schema.get("minimum", 1))
+    if kind == "number":
+        return float(schema.get("minimum", schema.get("exclusiveMinimum", 0) + 1))
     if kind == "boolean":
         return False
     if kind == "array":
@@ -133,6 +141,7 @@ def validate_response(path: str, method: str, response: Any) -> None:
 
 def path_for(path: str, robot_id: str) -> str:
     path = path.replace("{robot_id}", robot_id).replace("{digest}", "a" * 64)
+    path = path.replace("{evaluation_id}", "1")
     if "{" in path:
         raise AssertionError(f"Add a generated example for new path parameter: {path}")
     return path
@@ -162,9 +171,10 @@ def test_generated_missing_required_field(
     url = path_for(path, robot_id)
     # OpenAPI describes both principals as HTTPBearer. Try each and require one
     # to reach validation; the other must be rejected rather than gaining access.
-    responses = [
-        client.request(method, url, json=body, headers=h) for h in (OPERATOR, agent)
-    ]
+    credentials = (
+        (EVALUATOR, agent) if path.endswith("/evaluations") else (OPERATOR, agent)
+    )
+    responses = [client.request(method, url, json=body, headers=h) for h in credentials]
     assert sorted(response.status_code for response in responses) == [401, 422]
     for response in responses:
         validate_response(path, method, response)

@@ -14,6 +14,7 @@ dependencies = [
     "alembic==1.17.1",
     "tzdata==2026.5",
     "cryptography==46.0.5",
+    "pyyaml==6.0.3",
 ]
 
 [dependency-groups]
@@ -21,6 +22,7 @@ packaging = [
     "numpy==2.2.6",
     "onnx==1.19.1",
     "onnxruntime==1.22.1",
+    "pillow==11.3.0",
     "torch==2.8.0",
     "transformers==4.55.4",
 ]

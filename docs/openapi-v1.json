@@ -129,6 +129,17 @@
             "title": "Artifact Digest",
             "type": "string"
           },
+          "evaluation_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evaluation Id"
+          },
           "from_state": {
             "anyOf": [
               {
@@ -182,6 +193,27 @@
           "occurred_at"
         ],
         "title": "AuditOut",
+        "type": "object"
+      },
+      "CaseErrors": {
+        "additionalProperties": false,
+        "properties": {
+          "false_positives": {
+            "minimum": 0.0,
+            "title": "False Positives",
+            "type": "integer"
+          },
+          "missed": {
+            "minimum": 0.0,
+            "title": "Missed",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "missed",
+          "false_positives"
+        ],
+        "title": "CaseErrors",
         "type": "object"
       },
       "DailySafeUpdateWindow": {
@@ -368,6 +400,139 @@
           "error"
         ],
         "title": "ErrorEnvelope",
+        "type": "object"
+      },
+      "Evaluation": {
+        "additionalProperties": false,
+        "properties": {
+          "artifact_digest": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Artifact Digest",
+            "type": "string"
+          },
+          "benchmark_profile": {
+            "maxLength": 512,
+            "minLength": 1,
+            "title": "Benchmark Profile",
+            "type": "string"
+          },
+          "dataset_digest": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Dataset Digest",
+            "type": "string"
+          },
+          "known_cases": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/CaseErrors"
+            },
+            "title": "Known Cases",
+            "type": "object"
+          },
+          "overall": {
+            "$ref": "#/components/schemas/SliceMetrics"
+          },
+          "peak_rss_bytes": {
+            "exclusiveMinimum": 0.0,
+            "title": "Peak Rss Bytes",
+            "type": "integer"
+          },
+          "report_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Report Sha256",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": 1,
+            "title": "Schema Version",
+            "type": "integer"
+          },
+          "slices": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/SliceMetrics"
+            },
+            "title": "Slices",
+            "type": "object"
+          }
+        },
+        "required": [
+          "schema_version",
+          "artifact_digest",
+          "dataset_digest",
+          "report_sha256",
+          "benchmark_profile",
+          "peak_rss_bytes",
+          "slices",
+          "overall",
+          "known_cases"
+        ],
+        "title": "Evaluation",
+        "type": "object"
+      },
+      "EvaluationOut": {
+        "properties": {
+          "artifact_digest": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Artifact Digest",
+            "type": "string"
+          },
+          "baseline_digest": {
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Baseline Digest"
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/Evaluation"
+          },
+          "evidence_digest": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Evidence Digest",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "occurred_at": {
+            "format": "date-time",
+            "title": "Occurred At",
+            "type": "string"
+          },
+          "passed": {
+            "title": "Passed",
+            "type": "boolean"
+          },
+          "policy_digest": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Policy Digest",
+            "type": "string"
+          },
+          "violations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Violations",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "artifact_digest",
+          "policy_digest",
+          "evidence_digest",
+          "baseline_digest",
+          "passed",
+          "violations",
+          "evidence",
+          "occurred_at"
+        ],
+        "title": "EvaluationOut",
         "type": "object"
       },
       "Heartbeat": {
@@ -785,6 +950,74 @@
           "end"
         ],
         "title": "SafeUpdateWindow",
+        "type": "object"
+      },
+      "SliceMetrics": {
+        "additionalProperties": false,
+        "properties": {
+          "ap50": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ap50"
+          },
+          "boxes": {
+            "minimum": 0.0,
+            "title": "Boxes",
+            "type": "integer"
+          },
+          "false_positive_image_rate": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "False Positive Image Rate",
+            "type": "number"
+          },
+          "images": {
+            "exclusiveMinimum": 0.0,
+            "title": "Images",
+            "type": "integer"
+          },
+          "map": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Map"
+          },
+          "p50_ms": {
+            "exclusiveMinimum": 0.0,
+            "title": "P50 Ms",
+            "type": "number"
+          },
+          "p95_ms": {
+            "exclusiveMinimum": 0.0,
+            "title": "P95 Ms",
+            "type": "number"
+          }
+        },
+        "required": [
+          "images",
+          "boxes",
+          "map",
+          "ap50",
+          "false_positive_image_rate",
+          "p50_ms",
+          "p95_ms"
+        ],
+        "title": "SliceMetrics",
         "type": "object"
       }
     },
@@ -1388,6 +1621,212 @@
           }
         ],
         "summary": "Download Artifact",
+        "tags": [
+          "artifacts"
+        ]
+      }
+    },
+    "/v1/artifacts/{digest}/evaluations": {
+      "post": {
+        "operationId": "submit_evaluation_v1_artifacts__digest__evaluations_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "digest",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{64}$",
+              "title": "Digest",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Evaluation"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationOut"
+                }
+              }
+            },
+            "description": "Identical evidence replay"
+          },
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Valid credential required"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Artifact not found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Artifact conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Invalid request or bundle"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Artifact storage or trust unavailable"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Submit Evaluation",
+        "tags": [
+          "artifacts"
+        ]
+      }
+    },
+    "/v1/artifacts/{digest}/evaluations/{evaluation_id}": {
+      "get": {
+        "operationId": "read_evaluation_v1_artifacts__digest__evaluations__evaluation_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "digest",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9a-f]{64}$",
+              "title": "Digest",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "evaluation_id",
+            "required": true,
+            "schema": {
+              "minimum": 1,
+              "title": "Evaluation Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Valid credential required"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Artifact not found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Artifact conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Invalid request or bundle"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Artifact storage or trust unavailable"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Read Evaluation",
         "tags": [
           "artifacts"
         ]

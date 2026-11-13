@@ -1,0 +1,18 @@
+dataset_digest: f75b1e7ad2afd597b90530b236caee30d8192bd325634e30421513e2b127cadc
+score_threshold: 0.5
+max_map_drop: 0.02
+max_p95_increase: 0.10
+slices:
+  nominal: {images: 20, min_map: 0.30}
+  low_light: {images: 20, min_map: 0.35}
+  motion_blur: {images: 20, min_map: 0.28}
+  sensor_noise: {images: 20, min_map: 0.32}
+  small_thin: {images: 20, min_map: 0.17}
+  empty_scene: {images: 16, max_false_positive_image_rate: 0.125}
+  fari_indoor: {images: 24, min_map: 0.27}
+known_cases:
+  low_light-185409: {missed: 4, false_positives: 23}
+  motion_blur-185409: {missed: 7, false_positives: 11}
+  fari_indoor-298396: {missed: 21, false_positives: 24}
+  small_thin-189820: {missed: 10, false_positives: 34}
+  empty_scene-000001: {missed: 0, false_positives: 0}
