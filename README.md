@@ -3,10 +3,10 @@
 [![CI checks on main](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/actions/workflows/ci.yml?query=branch%3Amain)
 
 One shared control plane for robot model operations. Aido Rover is the primary
-fleet target; Fari checks whether the architecture generalises. Week 1 established
-the local foundation. Week 2 adds a fleet registry with distinct reported and
-desired state, per-robot credentials, and a versioned API. Artifact publication,
-the robot agent, rollouts, and cloud deployment remain future work.
+fleet target. Fari helps check whether the architecture generalises. Week 1
+established the local foundation. Week 2 added a versioned fleet registry with
+separate reported and desired state and per-robot credentials. Week 3 covers
+reproducible ONNX packaging, Ed25519 verification, and a signed artifact registry.
 
 ## Review by week
 
@@ -14,7 +14,8 @@ the robot agent, rollouts, and cloud deployment remain future work.
 | --- | --- | --- |
 | **Week 1** | Architecture, local infrastructure, and CI foundation | [Week 1 review](week-01/README.md) — deliverables, decisions, validation, and the original code snapshot |
 | **Week 2** | Fleet registry, API contract, and robot authentication | [Week 2 review](week-02/README.md) — implementation, migration, contract, tests, and weekly log |
-| Week 3 onward | Future work | Review entries will be added as work is completed. |
+| **Week 3** | Model packaging and signed artifact registry | [Week 3 review](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/blob/b2872811f8211abcff4d953f1859c85ecee24b01/week-03/README.md) · [PR #2](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/pull/2) |
+| Week 4 onward | Future work | Review entries will be added as work is completed. |
 
 Each review page links to that week's evidence. Source code remains in the
 shared service tree because subsequent weeks build on the previous work.
