@@ -18,6 +18,11 @@ dependencies = [
 ]
 
 [dependency-groups]
+robot = [
+    "httpx==0.28.1",
+    "numpy==2.2.6",
+    "onnxruntime==1.22.1",
+]
 packaging = [
     "numpy==2.2.6",
     "onnx==1.19.1",

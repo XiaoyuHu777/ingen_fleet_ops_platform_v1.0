@@ -1,0 +1,31 @@
+Week 5 systemd verification
+Docker Desktop Linux VM, Ubuntu 24.04, private cgroup namespace, network none
+Installer source: agent/systemd/install.sh
+Unit source: agent/systemd/ingen-agent.service
+Kill command: systemctl kill --kill-whom=main --signal=SIGKILL ingen-agent
+The test used a disposable robot identity with the Registry unreachable.
+
+Linux 6.12.76-linuxkit aarch64
+systemd 255 (255.4-1ubuntu8.19)
+Install twice and keep user UID 997: PASS
+systemd-analyze verify: PASS
+CapEff:	0000000000000000
+NoNewPrivs:	1
+Mount /var/lib/ingen-agent: rw
+Mount /: ro
+Read-only application mount: PASS
+ingen_agent_download_failures_total{robot_id="b5774c22-c99d-476b-ac41-2ed498da63b0"} 0
+Process restart and durable heartbeat sequence: 51 -> 52 PASS
+Restart=on-failure
+RestartUSec=2s
+RestartSteps=4
+RestartMaxDelayUSec=30s
+NRestarts=1
+User=ingen-agent
+ReadWritePaths=/var/lib/ingen-agent
+ProtectSystem=strict
+ActiveState=active
+
+ingen-agent.service: Scheduled restart job, restart counter is at 1.
+{"event":"agent_started","request-id":"-","robot-id":"b5774c22-c99d-476b-ac41-2ed498da63b0","version":"0.5.0"}
+{"event":"heartbeat","request-id":"526d4e56-6622-4f29-8477-8dc63d987c6d","robot-id":"b5774c22-c99d-476b-ac41-2ed498da63b0","status":null,"duration_ms":0.27}

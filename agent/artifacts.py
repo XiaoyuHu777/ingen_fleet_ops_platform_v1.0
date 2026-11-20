@@ -125,6 +125,9 @@ class Manifest(Contract):
     provenance: Provenance
     files: dict[FileName, HexDigest]
     payload_sha256: HexDigest
+    smoke_detections: list[Annotated[int, Field(ge=0)]] | None = Field(
+        default=None, exclude_if=lambda value: value is None
+    )
 
     @model_validator(mode="after")
     def validate_evidence(self) -> "Manifest":
@@ -143,6 +146,13 @@ class Manifest(Contract):
             or max(self.parity.max_abs_error.values()) >= self.parity.tolerance
         ):
             raise ValueError("Parity must pass for every output")
+        if self.smoke_detections is not None and (
+            len(self.smoke_detections) != self.parity.fixture_count
+            or any(
+                count > self.outputs.logits_shape[1] for count in self.smoke_detections
+            )
+        ):
+            raise ValueError("Smoke expectations must cover each parity fixture")
         return self
 
 

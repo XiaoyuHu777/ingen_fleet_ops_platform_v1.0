@@ -17,7 +17,6 @@ from PIL import Image, ImageDraw
 
 from agent.artifacts import (
     MAX_BUNDLE_BYTES,
-    InputContract,
     OutputContract,
     canonical_json,
     read_archive,
@@ -30,6 +29,7 @@ from agent.evaluation import (
     SliceMetrics,
     read_policy,
 )
+from agent.smoke import preprocess as preprocess
 from agent.verify import BUNDLE_MEMBERS, load_trust, verify_bundle
 from pipeline.detection_metrics import Detection, errors, mean_average_precision
 from pipeline.evaluation_report import write_report
@@ -47,32 +47,6 @@ class Frame:
     predictions: list[Detection]
     latency_ms: float
     errors: CaseErrors
-
-
-def preprocess(rgb: NDArray[np.uint8], contract: InputContract) -> NDArray[np.float32]:
-    """Apply the manifest's FP32 half-pixel RGB contract without PyTorch."""
-    height, width = rgb.shape[:2]
-    out_h, out_w = contract.shape[2:]
-    y = np.clip(
-        (np.arange(out_h, dtype=np.float32) + 0.5) * (height / out_h) - 0.5,
-        0,
-        height - 1,
-    )
-    x = np.clip(
-        (np.arange(out_w, dtype=np.float32) + 0.5) * (width / out_w) - 0.5, 0, width - 1
-    )
-    y0, x0 = y.astype(int), x.astype(int)
-    y1, x1 = np.minimum(y0 + 1, height - 1), np.minimum(x0 + 1, width - 1)
-    wy = (y - y0).astype(np.float32)[:, None, None]
-    wx = (x - x0).astype(np.float32)[None, :, None]
-    pixels = rgb.astype(np.float32) / np.float32(contract.uint8_scale)
-    top = pixels[y0[:, None], x0] * (1 - wx) + pixels[y0[:, None], x1] * wx
-    bottom = pixels[y1[:, None], x0] * (1 - wx) + pixels[y1[:, None], x1] * wx
-    normalized = (top * (1 - wy) + bottom * wy) - np.asarray(
-        contract.mean, dtype=np.float32
-    )
-    normalized /= np.asarray(contract.std, dtype=np.float32)
-    return np.ascontiguousarray(normalized.transpose(2, 0, 1)[None])
 
 
 def decode(
