@@ -1,0 +1,44 @@
+[Unit]
+Description=inGen robot model deployment agent
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=120
+StartLimitBurst=8
+
+[Service]
+Type=simple
+User=ingen-agent
+Group=ingen-agent
+WorkingDirectory=/opt/ingen-agent
+EnvironmentFile=/etc/ingen-agent/agent.env
+Environment=PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+ExecStart=/opt/ingen-agent/.venv/bin/python -m agent
+Restart=on-failure
+RestartSec=2s
+RestartSteps=4
+RestartMaxDelaySec=30s
+TimeoutStopSec=15s
+UMask=0077
+StateDirectory=ingen-agent
+StateDirectoryMode=0750
+ProtectSystem=strict
+ReadWritePaths=/var/lib/ingen-agent
+ProtectHome=true
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectClock=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictNamespaces=true
+LockPersonality=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+CapabilityBoundingSet=
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ingen-agent
+
+[Install]
+WantedBy=multi-user.target

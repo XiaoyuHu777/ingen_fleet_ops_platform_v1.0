@@ -44,14 +44,14 @@ setup:
 	UV_PYTHON_INSTALL_DIR="$(CURDIR)/.tools/python" UV_CACHE_DIR="$(CURDIR)/.uv-cache" $(UV) sync --frozen --group packaging
 
 lint:
-	$(RUN) ruff check agent pipeline services migrations tests scripts eval
-	$(RUN) black --check agent pipeline services migrations tests scripts eval
+	$(RUN) ruff check agent pipeline services migrations tests scripts eval sim
+	$(RUN) black --check agent pipeline services migrations tests scripts eval sim
 
 typecheck:
-	$(RUN) mypy
+	$(RUN) --group robot mypy
 
 test:
-	$(RUN) pytest
+	$(RUN) --group robot pytest
 
 check: lint typecheck test
 

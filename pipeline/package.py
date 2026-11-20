@@ -2,7 +2,6 @@
 
 import argparse
 import io
-import json
 import platform
 import random
 import subprocess
@@ -35,6 +34,8 @@ from agent.artifacts import (
     canonical_json,
     sha256,
 )
+from agent.smoke import detection_count, fixture_digest, fixtures
+from agent.smoke import preprocess as smoke_preprocess
 
 SOURCE = "https://huggingface.co/hustvl/yolos-tiny"
 REVISION = "da86128da961944dd8e33bb7c1baea46ed0a4753"
@@ -81,6 +82,7 @@ class Export:
     session: ort.InferenceSession
     parity: Parity
     outputs: OutputContract
+    smoke_detections: list[int]
 
     def run(self, pixels: np.ndarray) -> list[np.ndarray]:
         return self.session.run(list(OUTPUTS), {"pixel_values": pixels})
@@ -97,19 +99,6 @@ def fetch_checkpoint(directory: Path) -> None:
         if sha256(data) != digest:
             raise ValueError(f"Pinned checkpoint SHA-256 mismatch: {name}")
         path.write_bytes(data)
-
-
-def fixtures() -> list[np.ndarray]:
-    y, x = np.indices((73, 109), dtype=np.int32)
-    gradient = np.stack((3 * x + y, x + 5 * y, 7 * x - y), axis=-1).astype(np.uint8)
-    checker = np.where((x // 7 + y // 5) % 2, 255, 0).astype(np.uint8)
-    return [
-        np.zeros_like(gradient),
-        gradient,
-        gradient // 12,
-        np.stack((checker, 255 - checker, checker // 2), axis=-1),
-        np.flip(gradient, axis=1).copy(),
-    ]
 
 
 def preprocess(pixels: np.ndarray, contract: InputContract) -> torch.Tensor:
@@ -154,9 +143,16 @@ def export(profile: Profile, checkpoint: Path) -> Export:
 
     images = fixtures()
     inputs = [preprocess(image, profile.inputs) for image in images]
-    fixture_description = json.dumps([image.shape for image in images]).encode("ascii")
-    fixture_sha = sha256(
-        fixture_description + b"".join(image.tobytes() for image in images)
+    fixture_sha = fixture_digest(images)
+    outputs = OutputContract(
+        names=OUTPUTS,
+        logits_shape=(1, config.num_detection_tokens, config.num_labels + 1),
+        boxes_shape=(1, config.num_detection_tokens, 4),
+        dtype="float32",
+        box_format="normalized_cxcywh",
+        class_map={str(label): name for label, name in config.id2label.items()},
+        no_object_index=config.num_labels,
+        score_threshold=profile.score_threshold,
     )
     with torch.inference_mode():
         output = io.BytesIO()
@@ -201,16 +197,17 @@ def export(profile: Profile, checkpoint: Path) -> Export:
             max_abs_error=errors,
             tolerance=profile.parity_tolerance,
         ),
-        outputs=OutputContract(
-            names=OUTPUTS,
-            logits_shape=(1, config.num_detection_tokens, config.num_labels + 1),
-            boxes_shape=(1, config.num_detection_tokens, 4),
-            dtype="float32",
-            box_format="normalized_cxcywh",
-            class_map={str(label): name for label, name in config.id2label.items()},
-            no_object_index=config.num_labels,
-            score_threshold=profile.score_threshold,
-        ),
+        outputs=outputs,
+        smoke_detections=[
+            detection_count(
+                session.run(
+                    list(OUTPUTS),
+                    {profile.inputs.name: smoke_preprocess(image, profile.inputs)},
+                ),
+                outputs,
+            )
+            for image in images
+        ],
     )
 
 
@@ -311,6 +308,7 @@ def build(
         ),
         files={name: sha256(data) for name, data in files.items()},
         payload_sha256=sha256(payload),
+        smoke_detections=exported.smoke_detections,
     )
     destination.mkdir(parents=True, exist_ok=True)
     manifest_bytes = canonical_json(manifest)
