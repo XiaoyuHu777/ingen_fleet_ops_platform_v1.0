@@ -1,0 +1,138 @@
+{
+  "environment": {
+    "runtime": "Docker Desktop 29.4.3 Linux arm64",
+    "prometheus": "3.11.3",
+    "grafana": "12.4.3",
+    "fleet_project": "ingen-fleet-ops-week5",
+    "dashboard_verified_in_chromium": true
+  },
+  "check": "python3 -m scripts.verify_observability",
+  "after_convergence": {
+    "uid": "ingen-fleet-health",
+    "stale_after_seconds": 15,
+    "registered": 20,
+    "late_count": 0,
+    "agent_targets_up": 20,
+    "versions": [
+      {
+        "digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+        "model": "yolos-tiny",
+        "version": "1.0.0",
+        "robots": 20
+      }
+    ],
+    "late_robots": [],
+    "never_reported": [],
+    "failure_counters_reporting": [
+      true,
+      true,
+      true
+    ],
+    "correlated_request": {
+      "request_id": "244e782c-01a5-400f-af19-63a94397323b",
+      "robot_id": "4f2f7616-5a77-4bfd-a157-edcb4e143dda",
+      "status": 200,
+      "agent_event": "desired_poll",
+      "registry_method": "GET",
+      "registry_path": "/v1/robots/4f2f7616-5a77-4bfd-a157-edcb4e143dda/desired-state",
+      "registry_duration_ms": 172.91
+    }
+  },
+  "after_stopping_agent_01": {
+    "uid": "ingen-fleet-health",
+    "stale_after_seconds": 15,
+    "registered": 20,
+    "late_count": 1,
+    "agent_targets_up": 19,
+    "versions": [
+      {
+        "digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+        "model": "yolos-tiny",
+        "version": "1.0.0",
+        "robots": 20
+      }
+    ],
+    "late_robots": [
+      {
+        "robot_id": "4f2f7616-5a77-4bfd-a157-edcb4e143dda",
+        "site": "lab-east",
+        "age_seconds": 15.464
+      }
+    ],
+    "never_reported": [],
+    "failure_counters_reporting": [
+      true,
+      true,
+      true
+    ]
+  },
+  "after_restarting_agent_01": {
+    "uid": "ingen-fleet-health",
+    "stale_after_seconds": 15,
+    "registered": 20,
+    "late_count": 0,
+    "agent_targets_up": 20,
+    "versions": [
+      {
+        "digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+        "model": "yolos-tiny",
+        "version": "1.0.0",
+        "robots": 20
+      }
+    ],
+    "late_robots": [],
+    "never_reported": [],
+    "failure_counters_reporting": [
+      true,
+      true,
+      true
+    ]
+  },
+  "separate_two_version_registry_fixture": {
+    "uid": "ingen-fleet-health",
+    "stale_after_seconds": 15,
+    "registered": 3,
+    "late_count": 2,
+    "agent_targets_up": 0,
+    "versions": [
+      {
+        "digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+        "model": "yolos-tiny",
+        "version": "1.0.0",
+        "robots": 1
+      },
+      {
+        "digest": "sha256:ae8c38ed745d565f1397a209912614d9bb6997934fcae6eb7f2d3e2bf42c7a90",
+        "model": "yolos-tiny",
+        "version": "1.1.0-rc.1",
+        "robots": 1
+      },
+      {
+        "digest": "unassigned",
+        "model": "unknown",
+        "version": "unknown",
+        "robots": 1
+      }
+    ],
+    "late_robots": [
+      {
+        "robot_id": "3696e3f6-d9e8-4756-a7cd-031e310bf925",
+        "site": "west",
+        "age_seconds": 18.621
+      },
+      {
+        "robot_id": "88025844-4b8d-40f4-8259-57b6a31a31e0",
+        "site": "east",
+        "age_seconds": 18.611
+      }
+    ],
+    "never_reported": [
+      "82d88119-0d48-46a2-bf2d-6e8a6d3534a2"
+    ],
+    "failure_counters_reporting": [
+      false,
+      false,
+      false
+    ]
+  }
+}

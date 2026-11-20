@@ -25,6 +25,7 @@ from services.registry.checks import (
 from services.registry.config import Settings
 from services.registry.database import make_session_factory
 from services.registry.logging import configure_logging, request_id
+from services.registry.metrics import router as metrics_router
 from services.registry.probes import ProbeRunner
 
 logger = logging.getLogger(__name__)
@@ -52,12 +53,17 @@ def create_app(
     )
 
     application.state.settings = settings
+    token_file = settings.registry_metrics_token_file
+    application.state.metrics_token = (
+        token_file.read_bytes().strip() if token_file is not None else b""
+    )
     application.state.session_factory = make_session_factory(settings)
     application.state.artifact_store = artifact_store or MinioArtifactStore(
         minio_client(settings), settings.artifact_bucket
     )
     application.include_router(router)
     application.include_router(artifact_router)
+    application.include_router(metrics_router)
 
     @application.exception_handler(HTTPException)
     async def http_error(request: Request, exc: HTTPException) -> JSONResponse:
@@ -124,16 +130,35 @@ def create_app(
                 request._body = b"".join(chunks)
             response = await call_next(request)
             response.headers["X-Request-ID"] = correlation
+            duration_ms = round((perf_counter() - started) * 1000, 2)
             logger.info(
                 "%s %s status=%s duration_ms=%.2f",
                 request.method,
                 request.url.path,
                 response.status_code,
-                (perf_counter() - started) * 1000,
+                duration_ms,
+                extra={
+                    "request_id": correlation,
+                    "robot_id": getattr(request.state, "robot_id", "-"),
+                    "method": request.method,
+                    "path": request.url.path,
+                    "status": response.status_code,
+                    "duration_ms": duration_ms,
+                },
             )
             return response
         except Exception:
-            logger.exception("Request failed")
+            logger.exception(
+                "Request failed",
+                extra={
+                    "request_id": correlation,
+                    "robot_id": getattr(request.state, "robot_id", "-"),
+                    "method": request.method,
+                    "path": request.url.path,
+                    "status": 500,
+                    "duration_ms": round((perf_counter() - started) * 1000, 2),
+                },
+            )
             return JSONResponse(
                 status_code=500,
                 content={

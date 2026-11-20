@@ -10,7 +10,8 @@ copying or freezing separate versions of the implementation.
 | [2](../week-02/README.md) | Fleet registry and API contract | [Weekly log](Wk-02-Log.md); [API contract and threat model](../docs/W02_API_Contract.md); [test report](../docs/W02_Test_Report.md); [delivery map](../docs/W02_Delivery_Map.md) |
 | [3](../week-03/README.md) | ONNX packaging and signed artifact registry | [Weekly log](Wk-03-Log.md), [artifact contract](../docs/W03_Artifact_Contract.md), [model card](../docs/W03_Model_Card.md), [validation report](../docs/W03_Test_Report.md) |
 | [4](../week-04/README.md) | Evaluation gate and failure case regressions | [Weekly log](Wk-04-Log.md), [dataset](../eval/golden/DATASET.md), [evaluation reports](../docs/W04_Evaluation_Report/README.md) |
-| 5–8 | Later program work | To be added as work is completed. |
+| [5](../week-05/README.md) | Robot agent and fleet observability | [Weekly log](Wk-05-Log.md), [agent design](../docs/W05_Agent_Design.docx), [local activation ADR](../docs/adr/0005-agent-slot-activation.md) |
+| 6–8 | Later program work | To be added as work is completed. |
 
 Week-specific documents describe the evidence and scope at that point in time;
 consult the root README and current contract for how to run the current version.

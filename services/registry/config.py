@@ -11,6 +11,7 @@ class Settings(BaseSettings):
 
     operator_api_key: SecretStr | None = None
     evaluator_api_key: SecretStr | None = None
+    registry_metrics_token_file: Path | None = None
     gate_policy_path: Path | None = None
     postgres_host: str = "postgres"
     postgres_port: int = Field(default=5432, ge=1, le=65535)

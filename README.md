@@ -18,7 +18,8 @@ audited promotion gate that checks regressions before operator approval.
 | **Week 2** | Fleet registry, API contract, and robot authentication | [Week 2 review](week-02/README.md) — implementation, migration, contract, tests, and weekly log |
 | **Week 3** | Model packaging and signed artifact registry | [Week 3 review](week-03/README.md) · [PR #2](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/pull/2) |
 | **Week 4** | Evaluation gate and failure-case regression suite | Local validation approved the baseline and rejected the degraded candidate. 88 tests passed with 89.11% branch-aware Registry coverage. [Week 4 review](week-04/README.md) · [PR #3](https://github.com/XiaoyuHu777/ingen_fleet_ops_platform_v1.0/pull/3). |
-| Week 5 onward | Future work | Review entries will be added as work is completed. |
+| [Week 5](week-05/README.md) | Robot agent, fleet simulator, and observability | [Review, reproduction, and evidence](week-05/README.md) |
+| Weeks 6–8 | Future work | Review entries will be added as work is completed. |
 
 Each review page links to that week's evidence. Source code remains in the
 shared service tree because subsequent weeks build on the previous work.
@@ -127,8 +128,10 @@ branches failed only their intended gates. Full SHAs and limits are recorded in
 `services/registry/` contains the fleet and artifact APIs and database models; `migrations/`
 contains Alembic schema changes. `tests/`, `infra/local/`, `infra/terraform/`,
 and `scripts/` support validation and local operation. `pipeline/` builds
-and signs model artifacts, and `agent/` verifies them. `services/controller/`,
-`policy/`, and `sim/` reserve later component boundaries.
+and signs model artifacts. `agent/` reconciles and activates signed artifacts.
+`sim/` runs independent robot agents and injects local faults. `observability/`
+provides Prometheus and Grafana configuration. `services/controller/` reserves
+the rollout controller boundary.
 Architecture decisions are in
 `docs/adr/`; the [weekly review index](weekly/README.md) links each week’s
 deliverables. The [Week 2 API contract and threat model](docs/W02_API_Contract.md)
