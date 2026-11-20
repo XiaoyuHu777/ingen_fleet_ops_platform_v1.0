@@ -15,9 +15,13 @@ class JsonFormatter(logging.Formatter):
             "timestamp": datetime.now(UTC).isoformat(),
             "level": record.levelname,
             "logger": record.name,
-            "request-id": request_id.get(),
+            "request-id": getattr(record, "request_id", request_id.get()),
+            "robot-id": getattr(record, "robot_id", "-"),
             "message": record.getMessage(),
         }
+        for field in ("method", "path", "status", "duration_ms"):
+            if field in record.__dict__:
+                event[field] = record.__dict__[field]
         if record.exc_info:
             event["exception"] = self.formatException(record.exc_info)
         return json.dumps(event)

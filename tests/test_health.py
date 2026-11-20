@@ -59,6 +59,11 @@ def test_health_does_not_require_dependencies(settings: Settings) -> None:
     assert checks.calls == []
 
 
+def test_metrics_are_disabled_without_a_credential(settings: Settings) -> None:
+    response = TestClient(create_app(settings, FakeChecks())).get("/metrics")
+    assert response.status_code == 404
+
+
 def test_readiness_checks_both_dependencies(settings: Settings) -> None:
     checks = FakeChecks()
     response = TestClient(create_app(settings, checks)).get("/readyz")

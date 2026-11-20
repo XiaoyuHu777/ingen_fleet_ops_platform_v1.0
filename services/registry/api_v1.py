@@ -75,7 +75,9 @@ def operator(request: Request, credential: Credential) -> None:
         fail(401, "unauthorized", "Valid operator credential required")
 
 
-def robot_auth(robot_id: UUID, credential: Credential, db: DB) -> None:
+def robot_auth(
+    request: Request, robot_id: UUID, credential: Credential, db: DB
+) -> None:
     token = credential.credentials if credential else ""
     digest = hashlib.sha256(token.encode()).hexdigest()
     enrollment = db.scalar(
@@ -90,6 +92,7 @@ def robot_auth(robot_id: UUID, credential: Credential, db: DB) -> None:
         or not hmac.compare_digest(digest, enrollment.token_hash)
     ):
         fail(401, "unauthorized", "Valid robot credential required")
+    request.state.robot_id = str(robot_id)
 
 
 def get_robot(db: Session, robot_id: UUID) -> Robot:

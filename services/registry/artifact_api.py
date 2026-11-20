@@ -476,6 +476,7 @@ def download_artifact(
         enrollment = db.get(Enrollment, sha256(token.encode())) if token else None
         if enrollment is None or enrollment.revoked_at is not None:
             fail(401, "unauthorized", "Valid operator or robot credential required")
+        request.state.robot_id = str(enrollment.robot_id)
     row = find_artifact(db, digest)
     if row.state == "revoked":
         fail(410, "artifact_revoked", "Artifact has been revoked")

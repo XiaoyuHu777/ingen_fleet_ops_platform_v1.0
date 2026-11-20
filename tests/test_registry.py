@@ -1,26 +1,34 @@
 """End-to-end registry tests using a disposable database."""
 
+import json
+import logging
 import os
 import subprocess
 import sys
 from collections.abc import Iterator
+from datetime import UTC, datetime, timedelta
+from pathlib import Path
 from typing import cast
+from uuid import UUID
 
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
-from sqlalchemy import create_engine, event, select
+from sqlalchemy import create_engine, event, select, update
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from services.registry.app import create_app
 from services.registry.config import Settings
-from services.registry.models import Base, Enrollment
+from services.registry.logging import JsonFormatter
+from services.registry.models import Artifact, Base, Enrollment, ReportedState
 
 
 @pytest.fixture
-def client() -> Iterator[TestClient]:
+def client(tmp_path: Path) -> Iterator[TestClient]:
+    metrics_token_file = tmp_path / "metrics.token"
+    metrics_token_file.write_text("metrics-only-test-value\n", encoding="utf-8")
     settings = Settings(
         _env_file=None,
         postgres_db="test",
@@ -29,6 +37,7 @@ def client() -> Iterator[TestClient]:
         minio_root_user="test",
         minio_root_password=SecretStr("test"),
         operator_api_key=SecretStr("test-operator"),
+        registry_metrics_token_file=metrics_token_file,
     )
     engine = create_engine(
         "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
@@ -61,6 +70,99 @@ def enroll(c: TestClient) -> tuple[str, dict[str, str]]:
     return r.json()["robot"]["id"], {
         "Authorization": "Bearer " + r.json()["credential"]
     }
+
+
+def test_metrics_use_accepted_heartbeat_and_registered_inventory(
+    client: TestClient,
+) -> None:
+    assert client.get("/metrics").status_code == 401
+    assert client.get("/metrics", headers=OP).status_code == 401
+    active_id, active_key = enroll(client)
+    idle = client.post(
+        "/v1/robots",
+        json={**BODY, "site": 'west "edge"\\warehouse\n2'},
+        headers=OP,
+    )
+    assert idle.status_code == 201
+    idle_id = idle.json()["robot"]["id"]
+    heartbeat = {"sequence": 1, "agent_version": "test", "current_digest": DIGEST}
+    heartbeat_url = f"/v1/robots/{active_id}/heartbeat"
+    assert (
+        client.post(heartbeat_url, json=heartbeat, headers=active_key).status_code
+        == 200
+    )
+    with cast(FastAPI, client.app).state.session_factory() as db:
+        db.add(
+            Artifact(
+                digest=DIGEST.removeprefix("sha256:"),
+                name="fixture",
+                version="1.2.3",
+                signing_key_id="b" * 64,
+                bundle_sha256="c" * 64,
+                size_bytes=1024,
+                state="approved",
+            )
+        )
+        db.execute(
+            update(ReportedState)
+            .where(ReportedState.robot_id == UUID(active_id))
+            .values(last_seen=datetime.now(UTC) - timedelta(seconds=20))
+        )
+        db.commit()
+    assert (
+        client.post(heartbeat_url, json=heartbeat, headers=active_key).status_code
+        == 409
+    )
+
+    metrics_key = {"Authorization": "Bearer metrics-only-test-value"}
+    response = client.get("/metrics", headers=metrics_key)
+    assert response.status_code == 200
+    assert "version=0.0.4" in response.headers["content-type"]
+    active = f'{{robot_id="{active_id}",site="east"}}'
+    idle_labels = f'{{robot_id="{idle_id}",site="west \\"edge\\"\\\\warehouse\\n2"}}'
+    assert f"ingen_registry_robot_heartbeat_received{active} 1" in response.text
+    assert f"ingen_registry_robot_heartbeat_received{idle_labels} 0" in response.text
+    assert (
+        f"ingen_registry_robot_heartbeat_age_seconds{idle_labels}" not in response.text
+    )
+    age_line = next(
+        line
+        for line in response.text.splitlines()
+        if line.startswith(f"ingen_registry_robot_heartbeat_age_seconds{active} ")
+    )
+    assert float(age_line.rsplit(" ", 1)[1]) >= 20
+    assert (
+        f'ingen_registry_active_versions{{site="east",digest="{DIGEST}",'
+        'model="fixture",version="1.2.3"} 1'
+    ) in response.text
+    assert 'digest="unassigned"' in response.text
+    assert client.get("/v1/robots", headers=metrics_key).status_code == 401
+
+
+def test_logs_correlate_authenticated_robot_requests(
+    client: TestClient, caplog: pytest.LogCaptureFixture
+) -> None:
+    robot_id, agent = enroll(client)
+    path = f"/v1/robots/{robot_id}/desired-state"
+    correlation = "week5-correlation-example"
+    with caplog.at_level(logging.INFO, logger="services.registry.app"):
+        assert (
+            client.get(path, headers={**agent, "X-Request-ID": correlation}).status_code
+            == 200
+        )
+        assert (
+            client.get(path, headers={"X-Request-ID": "unverified"}).status_code == 401
+        )
+    formatter = JsonFormatter()
+    accepted, unauthorized = [json.loads(formatter.format(r)) for r in caplog.records]
+    assert accepted["request-id"] == correlation
+    assert accepted["robot-id"] == robot_id
+    assert (accepted["method"], accepted["path"], accepted["status"]) == (
+        "GET",
+        path,
+        200,
+    )
+    assert unauthorized["robot-id"] == "-"
 
 
 def test_enrollment_idempotency_auth_and_hash(client: TestClient) -> None:
