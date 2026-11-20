@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fleet convergence · Week 5</title>
+<style>
+  :root { color-scheme: dark; font-family: system-ui,sans-serif; background:#0e1625; color:#edf3ff }
+  body { margin:0 auto; max-width:1220px; padding:34px 36px 22px }
+  h1 { margin:0 0 6px; font-size:40px; letter-spacing:-.04em; line-height:1.05 }
+  p { margin:0; color:#aabfdb }
+  .headline { display:flex; justify-content:space-between; align-items:center; gap:12px }
+  #phase { padding:8px 12px; border:1px solid #516888; border-radius:20px; font-weight:700 }
+  .summary { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin:24px 0 12px }
+  .card, .site, .target { background:#17243a; border:1px solid #2b405e; border-radius:10px }
+  .card { padding:11px 14px }
+  .card span { display:block; font-size:13px; color:#aabfdb }
+  .card strong { font-size:26px; line-height:1.4; font-variant-numeric:tabular-nums }
+  .target { margin:0 0 16px; padding:10px 14px; overflow-wrap:anywhere }
+  .target code { color:#93c8fe; font-size:13px; margin-left:9px }
+  #sites { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:17px }
+  .site { padding:12px 14px }
+  h2 { margin:0 0 9px; font-size:19px }
+  .robot { display:grid; grid-template-columns:82px 1fr auto; gap:6px; padding:7px 0;
+           border-top:1px solid #30405a; font-size:14px; align-items:baseline }
+  .state { color:#aabfdb }
+  .good { color:#7de4ac }
+  .degraded { color:#ffd09a }
+  .seq { font:12px monospace; color:#aabfdb }
+  footer { font-size:13px; color:#aabfdb }
+  @media(max-width:780px) { body { padding:20px } #sites { grid-template-columns:1fr } }
+</style>
+<main>
+  <div class="headline">
+    <div><h1>Fleet convergence</h1><p>Week 5 · Live Registry heartbeats</p></div>
+    <span id="phase" role="status">Waiting for fleet</span>
+  </div>
+  <div class="summary">
+    <div class="card"><span>Robots on target</span><strong id="count">—</strong></div>
+    <div class="card"><span>Elapsed from assignment</span><strong id="elapsed">—</strong></div>
+    <div class="card"><span>Linux netem · Registry egress loss</span><strong id="loss">—</strong></div>
+  </div>
+  <div class="target"><span>Target <strong id="version">—</strong></span><code id="digest"></code></div>
+  <div id="sites"></div>
+  <footer id="source"></footer>
+</main>
+<script>
+const byId = id => document.getElementById(id);
+const siteNames = {"lab-east":"Lab East", "lab-central":"Lab Central", "lab-west":"Lab West"};
+function element(tag, value, className = "") {
+  const node = document.createElement(tag);
+  node.className = className;
+  node.textContent = value;
+  return node;
+}
+function render(data) {
+  if (!data.phase) return;
+  byId("phase").textContent = data.phase;
+  byId("phase").className = data.phase === "Converged" ? "good" : "";
+  byId("count").textContent = `${data.converged} / ${data.robot_count}`;
+  byId("elapsed").textContent = ((data.elapsed_seconds ?? 0).toFixed(1)) + " s";
+  byId("loss").textContent = data.injection.loss_percent + "%";
+  byId("version").textContent = data.target_version;
+  byId("digest").textContent = data.target_digest;
+  byId("source").textContent = `${data.cohort} · gate decision #${data.gate_evaluation_id} · ` +
+    `${data.artifact_state} · heartbeat sequence shown for each robot`;
+  const sites = Object.groupBy(data.robots, robot => robot.site);
+  byId("sites").replaceChildren(...Object.keys(siteNames).filter(site => sites[site]).map(site => {
+    const section = element("section", "", "site");
+    section.append(element("h2", siteNames[site]));
+    for (const robot of sites[site]) {
+      const row = element("div", "", "robot");
+      const active = robot.current_digest === data.target_digest;
+      const degraded = robot.health_summary.status === "degraded";
+      const observed = active ? `v${data.target_version}${degraded ? " · degraded" : " · healthy"}` : "Awaiting target";
+      row.append(element("strong", robot.service),
+                 element("span", observed, active ? (degraded ? "degraded" : "good") : "state"),
+                 element("span", `#${robot.heartbeat_sequence}`, "seq"));
+      section.append(row);
+    }
+    return section;
+  }));
+}
+async function update() {
+  try {
+    const response = await fetch("/status.json", { cache: "no-store" });
+    if (response.ok) render(await response.json());
+  } finally {
+    setTimeout(update, 400);
+  }
+}
+update();
+</script>
+</html>
