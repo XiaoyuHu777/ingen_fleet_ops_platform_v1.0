@@ -1,0 +1,1396 @@
+{
+  "scenario": "convergence",
+  "cohort": "w05-f42d0e02e1",
+  "robot_count": 20,
+  "target_digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+  "target_version": "1.0.0",
+  "gate_evaluation_id": 1,
+  "gate_passed": true,
+  "artifact_state": "approved",
+  "degraded_agent": null,
+  "injection": {
+    "loss_percent": 10.0,
+    "latency_ms": 0,
+    "outage_seconds": 0,
+    "write_delay_ms": 0,
+    "network_direction": "agent egress to Registry",
+    "initial_qdisc": {
+      "agent-01": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 0,
+          "packets": 0,
+          "drops": 0,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-02": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 0,
+          "packets": 0,
+          "drops": 0,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-03": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 0,
+          "packets": 0,
+          "drops": 0,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-04": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 0,
+          "packets": 0,
+          "drops": 0,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-05": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 0,
+          "packets": 0,
+          "drops": 0,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-06": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 0,
+          "packets": 0,
+          "drops": 0,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-07": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 0,
+          "packets": 0,
+          "drops": 0,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-08": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 0,
+          "packets": 0,
+          "drops": 0,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-09": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 0,
+          "packets": 0,
+          "drops": 0,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-10": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 0,
+          "packets": 0,
+          "drops": 0,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-11": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 0,
+          "packets": 0,
+          "drops": 0,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-12": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 0,
+          "packets": 0,
+          "drops": 0,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-13": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 0,
+          "packets": 0,
+          "drops": 0,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-14": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 0,
+          "packets": 0,
+          "drops": 0,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-15": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 0,
+          "packets": 0,
+          "drops": 0,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-16": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 0,
+          "packets": 0,
+          "drops": 0,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-17": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 0,
+          "packets": 0,
+          "drops": 0,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-18": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 0,
+          "packets": 0,
+          "drops": 0,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-19": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 0,
+          "packets": 0,
+          "drops": 0,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-20": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 0,
+          "packets": 0,
+          "drops": 0,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ]
+    },
+    "final_qdisc": {
+      "agent-01": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 72081,
+          "packets": 791,
+          "drops": 87,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-02": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 37644,
+          "packets": 283,
+          "drops": 30,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-03": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 131344,
+          "packets": 1683,
+          "drops": 184,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-04": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 55329,
+          "packets": 543,
+          "drops": 60,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-05": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 110814,
+          "packets": 1377,
+          "drops": 184,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-06": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 45891,
+          "packets": 397,
+          "drops": 35,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-07": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 102379,
+          "packets": 1246,
+          "drops": 115,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-08": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 41682,
+          "packets": 334,
+          "drops": 38,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-09": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 117567,
+          "packets": 1473,
+          "drops": 172,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-10": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 150623,
+          "packets": 1971,
+          "drops": 190,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-11": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 44034,
+          "packets": 385,
+          "drops": 48,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-12": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 110327,
+          "packets": 1365,
+          "drops": 156,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-13": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 56413,
+          "packets": 554,
+          "drops": 43,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-14": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 45816,
+          "packets": 395,
+          "drops": 47,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-15": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 76054,
+          "packets": 856,
+          "drops": 81,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-16": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 92155,
+          "packets": 1092,
+          "drops": 110,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-17": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 125965,
+          "packets": 1614,
+          "drops": 181,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-18": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 97093,
+          "packets": 1157,
+          "drops": 119,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-19": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 205890,
+          "packets": 2796,
+          "drops": 302,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ],
+      "agent-20": [
+        {
+          "kind": "netem",
+          "handle": "30:",
+          "parent": "1:3",
+          "options": {
+            "limit": 1000,
+            "loss-random": {
+              "loss": 0.1,
+              "correlation": 0
+            },
+            "ecn": false,
+            "gap": 0
+          },
+          "bytes": 108889,
+          "packets": 1343,
+          "drops": 166,
+          "overlimits": 0,
+          "requeues": 0,
+          "backlog": 0,
+          "qlen": 0
+        }
+      ]
+    }
+  },
+  "timeline": [
+    {
+      "elapsed_seconds": 0.073,
+      "converged": 0
+    },
+    {
+      "elapsed_seconds": 7.329,
+      "converged": 4
+    },
+    {
+      "elapsed_seconds": 8.219,
+      "converged": 5
+    },
+    {
+      "elapsed_seconds": 9.104,
+      "converged": 6
+    },
+    {
+      "elapsed_seconds": 9.53,
+      "converged": 9
+    },
+    {
+      "elapsed_seconds": 11.258,
+      "converged": 11
+    },
+    {
+      "elapsed_seconds": 11.683,
+      "converged": 12
+    },
+    {
+      "elapsed_seconds": 12.116,
+      "converged": 13
+    },
+    {
+      "elapsed_seconds": 13.414,
+      "converged": 15
+    },
+    {
+      "elapsed_seconds": 13.851,
+      "converged": 16
+    },
+    {
+      "elapsed_seconds": 14.286,
+      "converged": 17
+    },
+    {
+      "elapsed_seconds": 15.562,
+      "converged": 19
+    },
+    {
+      "elapsed_seconds": 15.98,
+      "converged": 20
+    }
+  ],
+  "desired_state_issued_utc": "2026-11-20T01:29:32.893489+00:00",
+  "convergence_seconds": 15.98,
+  "robots": [
+    {
+      "service": "agent-01",
+      "site": "lab-east",
+      "robot_id": "4f2f7616-5a77-4bfd-a157-edcb4e143dda",
+      "platform": "rover",
+      "current_digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "previous_digest": null,
+      "agent_version": "0.5.0",
+      "last_seen": "2026-11-20T01:29:48.455821Z",
+      "health_summary": {
+        "status": "healthy",
+        "error_count": 0,
+        "status_reason": null,
+        "safe_to_update": true,
+        "inference_latency_ms": 82.56849180324934,
+        "synthetic_detection_rate": 0.2
+      },
+      "heartbeat_sequence": 21
+    },
+    {
+      "service": "agent-02",
+      "site": "lab-central",
+      "robot_id": "02da2284-ce46-4cd5-90f9-2dacb226d2e2",
+      "platform": "Fari",
+      "current_digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "previous_digest": null,
+      "agent_version": "0.5.0",
+      "last_seen": "2026-11-20T01:29:48.285980Z",
+      "health_summary": {
+        "status": "healthy",
+        "error_count": 0,
+        "status_reason": null,
+        "safe_to_update": true,
+        "inference_latency_ms": 104.5778664003592,
+        "synthetic_detection_rate": 0.2
+      },
+      "heartbeat_sequence": 20
+    },
+    {
+      "service": "agent-03",
+      "site": "lab-west",
+      "robot_id": "3d204e26-50ed-4226-80f1-3a8b7b3cdd01",
+      "platform": "rover",
+      "current_digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "previous_digest": null,
+      "agent_version": "0.5.0",
+      "last_seen": "2026-11-20T01:29:48.185984Z",
+      "health_summary": {
+        "status": "healthy",
+        "error_count": 0,
+        "status_reason": null,
+        "safe_to_update": true,
+        "inference_latency_ms": 107.89953342173249,
+        "synthetic_detection_rate": 0.2
+      },
+      "heartbeat_sequence": 20
+    },
+    {
+      "service": "agent-04",
+      "site": "lab-east",
+      "robot_id": "0d252d92-5d36-4e6d-9eb1-a73b35ab26ea",
+      "platform": "rover",
+      "current_digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "previous_digest": null,
+      "agent_version": "0.5.0",
+      "last_seen": "2026-11-20T01:29:48.053253Z",
+      "health_summary": {
+        "status": "healthy",
+        "error_count": 0,
+        "status_reason": null,
+        "safe_to_update": true,
+        "inference_latency_ms": 90.39595879148692,
+        "synthetic_detection_rate": 0.2
+      },
+      "heartbeat_sequence": 21
+    },
+    {
+      "service": "agent-05",
+      "site": "lab-central",
+      "robot_id": "c66b6db7-79ce-415f-9656-22179618cad5",
+      "platform": "Fari",
+      "current_digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "previous_digest": null,
+      "agent_version": "0.5.0",
+      "last_seen": "2026-11-20T01:29:46.811455Z",
+      "health_summary": {
+        "status": "healthy",
+        "error_count": 0,
+        "status_reason": null,
+        "safe_to_update": true,
+        "inference_latency_ms": 103.1398081977386,
+        "synthetic_detection_rate": 0.2
+      },
+      "heartbeat_sequence": 20
+    },
+    {
+      "service": "agent-06",
+      "site": "lab-west",
+      "robot_id": "398618c1-7201-418a-9180-1a2b36f8c694",
+      "platform": "rover",
+      "current_digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "previous_digest": null,
+      "agent_version": "0.5.0",
+      "last_seen": "2026-11-20T01:29:46.073000Z",
+      "health_summary": {
+        "status": "healthy",
+        "error_count": 0,
+        "status_reason": null,
+        "safe_to_update": true,
+        "inference_latency_ms": 183.6943081987556,
+        "synthetic_detection_rate": 0.2
+      },
+      "heartbeat_sequence": 20
+    },
+    {
+      "service": "agent-07",
+      "site": "lab-east",
+      "robot_id": "96469a51-27b4-4565-8c5a-c3466ff9936c",
+      "platform": "rover",
+      "current_digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "previous_digest": null,
+      "agent_version": "0.5.0",
+      "last_seen": "2026-11-20T01:29:48.266595Z",
+      "health_summary": {
+        "status": "healthy",
+        "error_count": 0,
+        "status_reason": null,
+        "safe_to_update": true,
+        "inference_latency_ms": 83.7200662062969,
+        "synthetic_detection_rate": 0.2
+      },
+      "heartbeat_sequence": 21
+    },
+    {
+      "service": "agent-08",
+      "site": "lab-central",
+      "robot_id": "2500ff30-f50b-4e76-a8cb-8b6ff6735173",
+      "platform": "Fari",
+      "current_digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "previous_digest": null,
+      "agent_version": "0.5.0",
+      "last_seen": "2026-11-20T01:29:48.175014Z",
+      "health_summary": {
+        "status": "healthy",
+        "error_count": 0,
+        "status_reason": null,
+        "safe_to_update": true,
+        "inference_latency_ms": 179.78877499117516,
+        "synthetic_detection_rate": 0.2
+      },
+      "heartbeat_sequence": 21
+    },
+    {
+      "service": "agent-09",
+      "site": "lab-west",
+      "robot_id": "082aba48-d9b2-4715-9fde-ac6e37dfe2c2",
+      "platform": "rover",
+      "current_digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "previous_digest": null,
+      "agent_version": "0.5.0",
+      "last_seen": "2026-11-20T01:29:48.685204Z",
+      "health_summary": {
+        "status": "healthy",
+        "error_count": 0,
+        "status_reason": null,
+        "safe_to_update": true,
+        "inference_latency_ms": 84.90808319766074,
+        "synthetic_detection_rate": 0.2
+      },
+      "heartbeat_sequence": 21
+    },
+    {
+      "service": "agent-10",
+      "site": "lab-east",
+      "robot_id": "ad712b70-aaaa-4ae2-85d4-5d76d0991270",
+      "platform": "rover",
+      "current_digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "previous_digest": null,
+      "agent_version": "0.5.0",
+      "last_seen": "2026-11-20T01:29:48.272382Z",
+      "health_summary": {
+        "status": "healthy",
+        "error_count": 0,
+        "status_reason": null,
+        "safe_to_update": true,
+        "inference_latency_ms": 84.88798320759088,
+        "synthetic_detection_rate": 0.2
+      },
+      "heartbeat_sequence": 21
+    },
+    {
+      "service": "agent-11",
+      "site": "lab-central",
+      "robot_id": "34c3eb3e-f883-4c50-8b8b-ad3a24bab298",
+      "platform": "Fari",
+      "current_digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "previous_digest": null,
+      "agent_version": "0.5.0",
+      "last_seen": "2026-11-20T01:29:47.477420Z",
+      "health_summary": {
+        "status": "healthy",
+        "error_count": 0,
+        "status_reason": null,
+        "safe_to_update": true,
+        "inference_latency_ms": 185.0651663902681,
+        "synthetic_detection_rate": 0.2
+      },
+      "heartbeat_sequence": 20
+    },
+    {
+      "service": "agent-12",
+      "site": "lab-west",
+      "robot_id": "deb7f5c6-3bab-4743-903b-fcf13d8caf82",
+      "platform": "rover",
+      "current_digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "previous_digest": null,
+      "agent_version": "0.5.0",
+      "last_seen": "2026-11-20T01:29:48.779004Z",
+      "health_summary": {
+        "status": "healthy",
+        "error_count": 0,
+        "status_reason": null,
+        "safe_to_update": true,
+        "inference_latency_ms": 107.81379181426018,
+        "synthetic_detection_rate": 0.2
+      },
+      "heartbeat_sequence": 21
+    },
+    {
+      "service": "agent-13",
+      "site": "lab-east",
+      "robot_id": "ee559e19-627d-4192-b88f-c258d1441079",
+      "platform": "rover",
+      "current_digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "previous_digest": null,
+      "agent_version": "0.5.0",
+      "last_seen": "2026-11-20T01:29:48.173940Z",
+      "health_summary": {
+        "status": "healthy",
+        "error_count": 0,
+        "status_reason": null,
+        "safe_to_update": true,
+        "inference_latency_ms": 114.3655750027392,
+        "synthetic_detection_rate": 0.2
+      },
+      "heartbeat_sequence": 21
+    },
+    {
+      "service": "agent-14",
+      "site": "lab-central",
+      "robot_id": "9a6f9a42-333c-4583-87a8-39e4da27c0f9",
+      "platform": "Fari",
+      "current_digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "previous_digest": null,
+      "agent_version": "0.5.0",
+      "last_seen": "2026-11-20T01:29:48.296483Z",
+      "health_summary": {
+        "status": "healthy",
+        "error_count": 0,
+        "status_reason": null,
+        "safe_to_update": true,
+        "inference_latency_ms": 177.17356698121876,
+        "synthetic_detection_rate": 0.2
+      },
+      "heartbeat_sequence": 21
+    },
+    {
+      "service": "agent-15",
+      "site": "lab-west",
+      "robot_id": "d0afa1d3-ad96-4ab8-8d82-691975065f06",
+      "platform": "rover",
+      "current_digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "previous_digest": null,
+      "agent_version": "0.5.0",
+      "last_seen": "2026-11-20T01:29:48.375288Z",
+      "health_summary": {
+        "status": "healthy",
+        "error_count": 0,
+        "status_reason": null,
+        "safe_to_update": true,
+        "inference_latency_ms": 87.31059938436374,
+        "synthetic_detection_rate": 0.2
+      },
+      "heartbeat_sequence": 20
+    },
+    {
+      "service": "agent-16",
+      "site": "lab-east",
+      "robot_id": "baf15863-ff55-418c-89ae-49de972c38f5",
+      "platform": "rover",
+      "current_digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "previous_digest": null,
+      "agent_version": "0.5.0",
+      "last_seen": "2026-11-20T01:29:48.083780Z",
+      "health_summary": {
+        "status": "healthy",
+        "error_count": 0,
+        "status_reason": null,
+        "safe_to_update": true,
+        "inference_latency_ms": 89.34708319720812,
+        "synthetic_detection_rate": 0.2
+      },
+      "heartbeat_sequence": 21
+    },
+    {
+      "service": "agent-17",
+      "site": "lab-central",
+      "robot_id": "f3281eca-159c-49fb-9961-466fbf788a00",
+      "platform": "Fari",
+      "current_digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "previous_digest": null,
+      "agent_version": "0.5.0",
+      "last_seen": "2026-11-20T01:29:48.325173Z",
+      "health_summary": {
+        "status": "healthy",
+        "error_count": 0,
+        "status_reason": null,
+        "safe_to_update": true,
+        "inference_latency_ms": 93.46239160513505,
+        "synthetic_detection_rate": 0.2
+      },
+      "heartbeat_sequence": 19
+    },
+    {
+      "service": "agent-18",
+      "site": "lab-west",
+      "robot_id": "11892987-d5f1-4cd4-9d3c-75c840c900e2",
+      "platform": "rover",
+      "current_digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "previous_digest": null,
+      "agent_version": "0.5.0",
+      "last_seen": "2026-11-20T01:29:48.681761Z",
+      "health_summary": {
+        "status": "healthy",
+        "error_count": 0,
+        "status_reason": null,
+        "safe_to_update": true,
+        "inference_latency_ms": 92.55537478020415,
+        "synthetic_detection_rate": 0.2
+      },
+      "heartbeat_sequence": 21
+    },
+    {
+      "service": "agent-19",
+      "site": "lab-east",
+      "robot_id": "935ef154-9ae7-424f-872e-3a2cbeda0d6d",
+      "platform": "rover",
+      "current_digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "previous_digest": null,
+      "agent_version": "0.5.0",
+      "last_seen": "2026-11-20T01:29:48.192418Z",
+      "health_summary": {
+        "status": "healthy",
+        "error_count": 0,
+        "status_reason": null,
+        "safe_to_update": true,
+        "inference_latency_ms": 89.2007001908496,
+        "synthetic_detection_rate": 0.2
+      },
+      "heartbeat_sequence": 21
+    },
+    {
+      "service": "agent-20",
+      "site": "lab-central",
+      "robot_id": "c86a1d49-d7d8-4de7-82a6-bd383301d215",
+      "platform": "Fari",
+      "current_digest": "sha256:0d29ccb5c62fc76be1e9502359c5d2be4867a91b1dfa3034926b683ce8e4b523",
+      "previous_digest": null,
+      "agent_version": "0.5.0",
+      "last_seen": "2026-11-20T01:29:48.791875Z",
+      "health_summary": {
+        "status": "healthy",
+        "error_count": 0,
+        "status_reason": null,
+        "safe_to_update": true,
+        "inference_latency_ms": 85.45657518552616,
+        "synthetic_detection_rate": 0.2
+      },
+      "heartbeat_sequence": 21
+    }
+  ],
+  "log_correlation": [
+    {
+      "event": "desired_poll",
+      "request-id": "244e782c-01a5-400f-af19-63a94397323b",
+      "robot-id": "4f2f7616-5a77-4bfd-a157-edcb4e143dda",
+      "status": 200
+    },
+    {
+      "message": "GET /v1/robots/4f2f7616-5a77-4bfd-a157-edcb4e143dda/desired-state status=200 duration_ms=172.91",
+      "request-id": "244e782c-01a5-400f-af19-63a94397323b",
+      "robot-id": "4f2f7616-5a77-4bfd-a157-edcb4e143dda",
+      "method": "GET",
+      "path": "/v1/robots/4f2f7616-5a77-4bfd-a157-edcb4e143dda/desired-state",
+      "status": 200
+    }
+  ]
+}

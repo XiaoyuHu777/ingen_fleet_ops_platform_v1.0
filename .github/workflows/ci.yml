@@ -84,6 +84,21 @@ jobs:
           . ./.env
           set +a
           .venv/bin/python -m scripts.evaluation_smoke .week3/artifact.tar .week4/degraded.tar --reports .week4/reports --out .week4/reports/registry-evidence.json
+      - name: Converge twenty robots under packet loss and resume a killed agent
+        run: |
+          for scenario in convergence crash; do
+            if [ "$scenario" = convergence ]; then
+              fault_args=(--loss-percent 10)
+            else
+              fault_args=(--outage-seconds 3 --latency-ms 40 --write-delay-ms 8 --degraded-agent 1)
+            fi
+            .venv/bin/python -m sim.fleet \
+              --scenario "$scenario" --project "ingen-ci-week5-$scenario" \
+              --run-dir ".week5/$scenario" --port 8015 \
+              --bundle .week3/artifact.tar --evaluation .week4/reports/baseline \
+              --trust .week3/keys/public --report ".week5/evidence/$scenario.json" \
+              "${fault_args[@]}"
+          done
       - name: Show stack logs and retain no data after this ephemeral CI run
         if: always()
         run: |
@@ -101,6 +116,7 @@ jobs:
             .week3/first/manifest.json
             .week3/benchmark.json
             .week4/reports
+            .week5/evidence/*.json
           include-hidden-files: true
 
   api-compatibility:
