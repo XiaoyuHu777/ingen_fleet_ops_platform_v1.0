@@ -8,6 +8,15 @@ from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
+SIGNED_MANIFEST = ".manifest.json"
+SIGNED_ENVELOPE = ".signature.json"
+
+
+def installed_manifest(directory: Path) -> bytes:
+    signed = directory / SIGNED_MANIFEST
+    # Week 5 installations stored the manifest at the top level.
+    return (signed if signed.is_file() else directory / "manifest.json").read_bytes()
+
 
 def sync_dir(directory: Path) -> None:
     fd = os.open(directory, os.O_RDONLY | os.O_DIRECTORY)
@@ -113,11 +122,18 @@ class State:
         scratch.mkdir()
         try:
             if destination.exists():
-                if any(
-                    (destination / name).read_bytes() != data
-                    for name, data in files.items()
-                ):
-                    raise ValueError("Installed bytes differ from the verified bundle")
+                for name, data in files.items():
+                    path = destination / name
+                    if name in (SIGNED_MANIFEST, SIGNED_ENVELOPE) and not path.exists():
+                        # Populate the signature metadata when reusing a Week 5 slot.
+                        continue
+                    if path.read_bytes() != data:
+                        raise ValueError(
+                            "Installed bytes differ from the verified bundle"
+                        )
+                for name in (SIGNED_MANIFEST, SIGNED_ENVELOPE):
+                    if not (destination / name).exists():
+                        atomic_write(destination / name, files[name])
             else:
                 for name, data in files.items():
                     atomic_write(scratch / name, data)
