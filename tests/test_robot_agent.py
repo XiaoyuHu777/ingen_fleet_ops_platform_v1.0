@@ -158,6 +158,8 @@ class Registry:
     def download(self, request: httpx.Request, bundle: bytes) -> httpx.Response:
         tag = f'"{sha256(bundle)}"'
         headers = {"ETag": tag, "Content-Length": str(len(bundle))}
+        if request.method == "HEAD":
+            return httpx.Response(403 if self.refuse_approval else 200, headers=headers)
         requested = request.headers.get("Range")
         if requested == "bytes=0-0":
             if self.refuse_approval:
@@ -246,6 +248,7 @@ def test_fari_waits_for_window_and_local_flag_with_304(
         "inference_latency_ms": 12.5,
         "synthetic_detection_rate": 0.4,
         "error_count": 0,
+        "smoke_test_failure_count": 0,
         "safe_to_update": True,
     }
 
@@ -478,3 +481,54 @@ def test_degraded_digest_reports_week_six_signal(
     assert registry.report["current_digest"] == f"sha256:{digest}"
     assert registry.report["health_summary"]["status"] == "degraded"
     assert registry.report["health_summary"]["status_reason"] == "simulated_digest"
+
+
+@pytest.mark.parametrize("retained", ["intact", "tampered", "unapproved", "legacy"])
+def test_controller_rollback_to_retained_slot(
+    tmp_path: Path, registry: Registry, retained: str
+) -> None:
+    baseline = package(registry, tmp_path, "1.0.0", b"A")
+    baseline_digest = registry.activate(baseline)
+    agent = registry.build_agent()
+    agent.heartbeat()
+    agent.reconcile()
+    candidate_digest = registry.activate(package(registry, tmp_path, "1.1.0", b"B"))
+    agent.reconcile()
+    agent.http.close()
+
+    model_dir = agent.state.models / baseline_digest
+    if retained == "tampered":
+        (model_dir / "model.onnx").write_bytes(b"modified")
+    if retained == "legacy":
+        (model_dir / ".signature.json").unlink()
+        (model_dir / ".manifest.json").unlink()
+    registry.refuse_approval = retained == "unapproved"
+    registry.activate(baseline)
+    agent = registry.build_agent()
+    agent.heartbeat()
+    registry.calls.clear()
+    if retained == "tampered":
+        with pytest.raises(ArtifactError, match="Payload archive SHA-256 differs"):
+            agent.reconcile()
+        current = agent.state.deployment.current
+        assert current is not None and current.digest == candidate_digest
+        assert not any(r.url.path.endswith("/download") for r in registry.calls)
+        return
+    if retained == "unapproved":
+        with pytest.raises(httpx.HTTPStatusError) as error:
+            agent.reconcile()
+        assert error.value.response.status_code == 403
+        assert agent.state.active.readlink().as_posix() == "slots/B"
+        return
+
+    agent.reconcile()
+    downloads = [r for r in registry.calls if r.url.path.endswith("/download")]
+    if retained == "legacy":
+        assert [request.method for request in downloads] == ["GET", "GET"]
+        assert (model_dir / ".signature.json").is_file()
+    else:
+        assert [request.method for request in downloads] == ["HEAD"]
+    assert agent.state.active.readlink().as_posix() == "slots/A"
+    agent.heartbeat()
+    assert registry.report["current_digest"] == f"sha256:{baseline_digest}"
+    assert registry.report["previous_digest"] == f"sha256:{candidate_digest}"

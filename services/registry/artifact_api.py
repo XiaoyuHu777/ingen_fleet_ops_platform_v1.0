@@ -443,6 +443,57 @@ def byte_range(value: str | None, size: int) -> tuple[int, int] | None:
     return start, end
 
 
+def authorized_download(
+    digest: str, request: Request, credential: Credential, db: DB
+) -> Artifact:
+    privileged = is_operator(request, credential)
+    if not privileged:
+        token = credential.credentials if credential else ""
+        enrollment = db.get(Enrollment, sha256(token.encode())) if token else None
+        if enrollment is None or enrollment.revoked_at is not None:
+            fail(401, "unauthorized", "Valid operator or robot credential required")
+        request.state.robot_id = str(enrollment.robot_id)
+    row = find_artifact(db, digest)
+    if row.state == "revoked":
+        fail(410, "artifact_revoked", "Artifact has been revoked")
+    if not privileged and row.state != "approved":
+        fail(
+            403, "artifact_not_approved", "Robots can download only approved artifacts"
+        )
+    return row
+
+
+def download_headers(row: Artifact) -> dict[str, str]:
+    return {
+        "Accept-Ranges": "bytes",
+        "ETag": f'"{row.bundle_sha256}"',
+        "Cache-Control": "private, no-store",
+    }
+
+
+@router.head(
+    "/{digest}/download",
+    response_class=Response,
+    responses={
+        200: {
+            "description": "Authorized signed bundle metadata without a response body",
+            "headers": {
+                "ETag": {"schema": {"type": "string"}},
+                "Content-Length": {"schema": {"type": "integer", "minimum": 1}},
+            },
+        },
+        403: {"model": ErrorEnvelope, "description": "Artifact unavailable to robots"},
+        410: {"model": ErrorEnvelope, "description": "Artifact revoked"},
+    },
+)
+def head_artifact_download(
+    digest: ArtifactDigest, request: Request, credential: Credential, db: DB
+) -> Response:
+    row = authorized_download(digest, request, credential, db)
+    headers = {**download_headers(row), "Content-Length": str(row.size_bytes)}
+    return Response(headers=headers, media_type=MEDIA_TYPE)
+
+
 @router.get(
     "/{digest}/download",
     response_class=Response,
@@ -470,27 +521,9 @@ def download_artifact(
     requested: Annotated[str | None, Header(alias="Range")] = None,
     if_range: Annotated[str | None, Header()] = None,
 ) -> Response:
-    privileged = is_operator(request, credential)
-    if not privileged:
-        token = credential.credentials if credential else ""
-        enrollment = db.get(Enrollment, sha256(token.encode())) if token else None
-        if enrollment is None or enrollment.revoked_at is not None:
-            fail(401, "unauthorized", "Valid operator or robot credential required")
-        request.state.robot_id = str(enrollment.robot_id)
-    row = find_artifact(db, digest)
-    if row.state == "revoked":
-        fail(410, "artifact_revoked", "Artifact has been revoked")
-    if not privileged and row.state != "approved":
-        fail(
-            403, "artifact_not_approved", "Robots can download only approved artifacts"
-        )
-
-    etag = f'"{row.bundle_sha256}"'
-    headers = {
-        "Accept-Ranges": "bytes",
-        "ETag": etag,
-        "Cache-Control": "private, no-store",
-    }
+    row = authorized_download(digest, request, credential, db)
+    headers = download_headers(row)
+    etag = headers["ETag"]
     try:
         interval = (
             byte_range(requested, row.size_bytes) if if_range in (None, etag) else None

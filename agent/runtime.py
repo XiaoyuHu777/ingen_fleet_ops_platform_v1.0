@@ -14,22 +14,33 @@ from uuid import uuid4
 
 import httpx
 
-from agent.artifacts import ArtifactError, read_archive, read_manifest, sha256
+from agent.artifacts import (
+    ArtifactError,
+    Manifest,
+    archive,
+    read_archive,
+    read_manifest,
+    sha256,
+)
 from agent.download import STRONG_TAG, DownloadError, StagedDownload
 from agent.settings import Settings, in_window
 from agent.smoke import smoke
 from agent.storage import (
+    SIGNED_ENVELOPE,
+    SIGNED_MANIFEST,
     Deployment,
+    Slot,
     SmokeResult,
     State,
     atomic_json,
     atomic_write,
+    installed_manifest,
     read_json,
 )
 from agent.verify import BUNDLE_MEMBERS, load_trust, verify_bundle
 from services.registry.schemas import DesiredOut, RobotOut
 
-VERSION = "0.5.0"
+VERSION = "0.6.0"
 FAILURES = ("download", "verification", "smoke_test")
 LOGGER = logging.getLogger("ingen-agent")
 STATE_ERRORS = (OSError, ValueError, httpx.HTTPError)
@@ -140,6 +151,7 @@ class Agent:
         degraded = simulated or self.smoke_failed
         with self.failure_lock:
             error_count = sum(self.failures.values())
+            smoke_test_failure_count = self.failures["smoke_test"]
         return {
             "status": "degraded" if degraded else "healthy" if current else "starting",
             "status_reason": (
@@ -150,6 +162,7 @@ class Agent:
                 result.synthetic_detection_rate if result else None
             ),
             "error_count": error_count,
+            "smoke_test_failure_count": smoke_test_failure_count,
             "safe_to_update": self.safe_flag(),
         }
 
@@ -240,34 +253,16 @@ class Agent:
             error=getattr(error, "code", type(error).__name__),
         )
 
-    def reconcile(self) -> None:
-        desired = self.poll()
-        if self.rejected_etag is not None and self.rejected_etag != self.etag:
-            self.clear_attempt()
-        target = desired.target_digest
-        digest = target.removeprefix("sha256:") if target else None
-        # Bound disk usage to the active/previous models and one desired bundle.
-        for old in self.state.staging.glob("*.part"):
-            if old.stem != digest:
-                StagedDownload(self.state.staging, old.stem).discard()
-        for old in self.state.staging.glob("*.json"):
-            if old.stem != digest:
-                StagedDownload(self.state.staging, old.stem).discard()
-        current = self.state.deployment.current
-        if (
-            digest is None
-            or (current and current.digest == digest)
-            or self.rejected_etag
-        ):
-            return
-        staged = StagedDownload(self.state.staging, digest)
+    def prepare_download(
+        self, digest: str, staged: StagedDownload
+    ) -> tuple[Slot, Manifest] | None:
         try:
             tag, length = self.download(digest, staged)
         except STATE_ERRORS as error:
             self.failed("download", error, digest)
             raise
         if not self.may_activate():
-            return
+            return None
         try:
             bundle = staged.complete(tag, length)
             artifact = verify_bundle(
@@ -275,7 +270,9 @@ class Agent:
             )
             contents = read_archive(bundle, BUNDLE_MEMBERS)
             files = read_archive(contents["payload.tar"], set(artifact.manifest.files))
-            files["manifest.json"] = contents["manifest.json"]
+            files.setdefault("manifest.json", contents["manifest.json"])
+            files[SIGNED_MANIFEST] = contents["manifest.json"]
+            files[SIGNED_ENVELOPE] = contents["signature.json"]
         except (ArtifactError, ValueError, OSError) as error:
             self.failed("verification", error, digest)
             staged.discard()
@@ -300,6 +297,87 @@ class Agent:
                 staged.discard()
             self.failed("download", error, digest)
             raise
+        return candidate, artifact.manifest
+
+    def authorize_retained(self, slot: Slot) -> Manifest:
+        digest = slot.digest
+        directory = self.state.models / digest
+        try:
+            raw = installed_manifest(directory)
+            manifest = read_manifest(raw)
+            payload = archive(
+                {name: (directory / name).read_bytes() for name in manifest.files}
+            )
+            bundle = archive(
+                {
+                    "manifest.json": raw,
+                    "payload.tar": payload,
+                    "signature.json": (directory / SIGNED_ENVELOPE).read_bytes(),
+                }
+            )
+            artifact = verify_bundle(
+                bundle, load_trust(self.settings.trust_dir), digest
+            )
+        except (OSError, ValueError) as error:
+            self.failed("verification", error, digest)
+            raise
+
+        try:
+            with self.request(
+                "cached_approval_recheck",
+                "HEAD",
+                f"/v1/artifacts/{digest}/download",
+                digest=digest,
+            ) as response:
+                response.raise_for_status()
+                expected = f'"{sha256(bundle)}"', len(bundle)
+                if (
+                    response.status_code != 200
+                    or StagedDownload.headers(response) != expected
+                ):
+                    raise DownloadError(
+                        "Approved representation differs from the retained model"
+                    )
+        except STATE_ERRORS as error:
+            self.failed("download", error, digest)
+            raise
+        self.log("cached_artifact_verified", digest=digest, slot=slot.letter)
+        return artifact.manifest
+
+    def reconcile(self) -> None:
+        desired = self.poll()
+        if self.rejected_etag is not None and self.rejected_etag != self.etag:
+            self.clear_attempt()
+        target = desired.target_digest
+        digest = target.removeprefix("sha256:") if target else None
+        # Bound disk usage to the active/previous models and one desired bundle.
+        for pattern in ("*.part", "*.json"):
+            for old in self.state.staging.glob(pattern):
+                if old.stem != digest:
+                    StagedDownload(self.state.staging, old.stem).discard()
+        deployment = self.state.deployment
+        current, previous = deployment.current, deployment.previous
+        if (
+            digest is None
+            or (current and current.digest == digest)
+            or self.rejected_etag
+        ):
+            return
+        staged = StagedDownload(self.state.staging, digest)
+        if (
+            previous
+            and previous.digest == digest
+            and (self.state.models / digest / SIGNED_ENVELOPE).is_file()
+        ):
+            if not self.may_activate():
+                return
+            candidate = previous
+            manifest = self.authorize_retained(candidate)
+        else:
+            prepared = self.prepare_download(digest, staged)
+            if prepared is None:
+                return
+            candidate, manifest = prepared
         # Recheck the target and local gate after the download and verification.
         if self.poll() != desired or not self.may_activate():
             self.state.cleanup()
@@ -317,7 +395,7 @@ class Agent:
         except OSError as error:
             raise RuntimeError("Could not write activation pointers") from error
         try:
-            model, result = smoke(self.state.active / "model.onnx", artifact.manifest)
+            model, result = smoke(self.state.active / "model.onnx", manifest)
         except Exception as error:
             # Handle loader/inference failures without a network request.
             try:
@@ -359,7 +437,7 @@ class Agent:
         if current is None:
             return
         try:
-            raw = (self.state.active / "manifest.json").read_bytes()
+            raw = installed_manifest(self.state.active)
             if sha256(raw) != current.digest:
                 raise ValueError(
                     "Installed manifest does not match the committed digest"

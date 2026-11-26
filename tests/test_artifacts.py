@@ -371,6 +371,8 @@ def test_range_download_and_lifecycle(
     robot = {"Authorization": f"Bearer {enrolled['credential']}"}
     assert client.get(url + "/download").status_code == 401
     assert client.get(url + "/download", headers=robot).status_code == 403
+    assert client.head(url + "/download").status_code == 401
+    assert client.head(url + "/download", headers=robot).status_code == 403
     assert (
         client.get("/v1/artifacts/" + "0" * 64 + "/audit", headers=OPERATOR).status_code
         == 404
@@ -429,6 +431,10 @@ def test_range_download_and_lifecycle(
     assert full.status_code == 200 and full.content == body
     store.fail_read = True
     assert client.get(url + "/download", headers=robot).status_code == 503
+    metadata = client.head(url + "/download", headers=robot)
+    assert metadata.status_code == 200 and not metadata.content
+    assert metadata.headers["etag"] == first.headers["etag"]
+    assert metadata.headers["content-length"] == str(len(body))
     store.fail_read = False
     robot_id = enrolled["robot"]["id"]
     assert (
@@ -436,10 +442,12 @@ def test_range_download_and_lifecycle(
         == 204
     )
     assert client.get(url + "/download", headers=robot).status_code == 401
+    assert client.head(url + "/download", headers=robot).status_code == 401
     assert transition("approved", "deprecated") == 200
     assert transition("deprecated", "revoked") == 200
     assert transition("revoked", "approved") == 409
     assert client.get(url + "/download", headers=OPERATOR).status_code == 410
+    assert client.head(url + "/download", headers=OPERATOR).status_code == 410
     first_events = client.get(
         url + "/audit", params={"limit": 2}, headers=OPERATOR
     ).json()
